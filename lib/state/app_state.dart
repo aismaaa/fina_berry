@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AppState extends ChangeNotifier {
-  final String _baseUrl = 'http://127.0.0.1:8000/api';
+  final String _baseUrl = 'http://192.168.101.22:8000/api';
 
   AppState() {
     // Try to load initial data from Laravel backend on startup
