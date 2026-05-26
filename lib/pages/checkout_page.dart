@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import '../state/app_state.dart';
 import '../widgets/footer_widget.dart';
 
@@ -23,6 +26,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   final _tableController = TextEditingController(text: 'A4');
   final _formKey = GlobalKey<FormState>();
   String _selectedPaymentMethod = 'QRIS'; // Default to QRIS
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -31,26 +35,117 @@ class _CheckoutPageState extends State<CheckoutPage> {
     super.dispose();
   }
 
+  Future<void> _processMidtransPayment(
+    String name,
+    String table,
+    int amount,
+  ) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Menggunakan public Sandbox Key untuk testing sementara
+      const serverKey = 'SB-Mid-server-ToO7zCEY0tUv2VIfB2a1K-Iu';
+      final String basicAuth =
+          'Basic ${base64Encode(utf8.encode('$serverKey:'))}';
+
+      // Menggunakan proxy CORS karena web browser (Chrome) memblokir request langsung (CORS)
+      final response = await http.post(
+        Uri.parse(
+          'https://corsproxy.io/?https://app.sandbox.midtrans.com/snap/v1/transactions',
+        ),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': basicAuth,
+        },
+        body: jsonEncode({
+          "transaction_details": {
+            "order_id": "ORDER-${DateTime.now().millisecondsSinceEpoch}",
+            "gross_amount": amount,
+          },
+          "customer_details": {
+            "first_name": name,
+            "email": "customer@example.com",
+          },
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 201 && data['redirect_url'] != null) {
+        // Kosongkan keranjang
+        widget.appState.checkout(
+          customerName: name,
+          tableNumber: table,
+          paymentMethod: _selectedPaymentMethod,
+        );
+
+        // Buka URL Pembayaran di Browser
+        final redirectUrl = Uri.parse(data['redirect_url']);
+        if (!await launchUrl(
+          redirectUrl,
+          mode: LaunchMode.externalApplication,
+        )) {
+          throw Exception('Tidak dapat membuka halaman pembayaran');
+        }
+
+        // Asumsikan sukses setelah membuka browser
+        if (mounted) {
+          widget.onOrderSuccess();
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Gagal: ${data['error_messages'] ?? "Cek Server Key Midtrans Anda"}',
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     String formatPrice(double price) {
-      return 'Rp ${price.toInt().toString().replaceAllMapped(
-            RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-            (Match m) => '${m[1]}.',
-          )}';
+      return 'Rp ${price.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}';
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B0F19) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0B0F19)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF0B0F19) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0B0F19)
+            : const Color(0xFFF8FAFC),
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDark ? Colors.white : Colors.black,
+          ),
           onPressed: widget.onCancel,
         ),
         title: Text(
@@ -78,11 +173,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF161F30) : Colors.white,
+                          color: isDark
+                              ? const Color(0xFF161F30)
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                              color: Colors.black.withOpacity(
+                                isDark ? 0.3 : 0.05,
+                              ),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -104,22 +203,32 @@ class _CheckoutPageState extends State<CheckoutPage> {
                               'Nama Lengkap',
                               style: TextStyle(
                                 fontSize: 13,
-                                color: isDark ? Colors.grey[400] : Colors.grey[700],
+                                color: isDark
+                                    ? Colors.grey[400]
+                                    : Colors.grey[700],
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                             const SizedBox(height: 8),
                             TextFormField(
                               controller: _nameController,
-                              style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 14),
+                              style: TextStyle(
+                                color: isDark ? Colors.white : Colors.black,
+                                fontSize: 14,
+                              ),
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: isDark ? const Color(0xFF1E293B) : Colors.grey[100],
+                                fillColor: isDark
+                                    ? const Color(0xFF1E293B)
+                                    : Colors.grey[100],
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide.none,
                                 ),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 14,
+                                ),
                               ),
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
@@ -133,22 +242,32 @@ class _CheckoutPageState extends State<CheckoutPage> {
                               'Nomor Meja',
                               style: TextStyle(
                                 fontSize: 13,
-                                color: isDark ? Colors.grey[400] : Colors.grey[700],
+                                color: isDark
+                                    ? Colors.grey[400]
+                                    : Colors.grey[700],
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                             const SizedBox(height: 8),
                             TextFormField(
                               controller: _tableController,
-                              style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 14),
+                              style: TextStyle(
+                                color: isDark ? Colors.white : Colors.black,
+                                fontSize: 14,
+                              ),
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: isDark ? const Color(0xFF1E293B) : Colors.grey[100],
+                                fillColor: isDark
+                                    ? const Color(0xFF1E293B)
+                                    : Colors.grey[100],
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide.none,
                                 ),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 14,
+                                ),
                               ),
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
@@ -170,7 +289,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                   'Dari QR Code scan',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: isDark ? const Color(0xFF10B981) : const Color(0xFF059669),
+                                    color: isDark
+                                        ? const Color(0xFF10B981)
+                                        : const Color(0xFF059669),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -185,11 +306,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF161F30) : Colors.white,
+                          color: isDark
+                              ? const Color(0xFF161F30)
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                              color: Colors.black.withOpacity(
+                                isDark ? 0.3 : 0.05,
+                              ),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -233,7 +358,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           ],
                         ),
                       ),
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 24),
                       const FooterWidget(),
                     ],
                   ),
@@ -245,7 +370,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF161F30) : Colors.white,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(28),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(isDark ? 0.4 : 0.08),
@@ -281,61 +408,85 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            final name = _nameController.text;
-                            final table = _tableController.text;
-                            final payment = _selectedPaymentMethod;
-                            final totalVal = widget.appState.cartTotal;
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                if (_formKey.currentState!.validate()) {
+                                  final name = _nameController.text;
+                                  final table = _tableController.text;
+                                  final payment = _selectedPaymentMethod;
+                                  final totalVal = widget.appState.cartTotal;
 
-                            widget.appState.checkout(
-                              customerName: name,
-                              tableNumber: table,
-                              paymentMethod: payment,
-                            );
+                                  if (payment == 'Cash') {
+                                    // Cash: Proses langsung tanpa Midtrans
+                                    widget.appState.checkout(
+                                      customerName: name,
+                                      tableNumber: table,
+                                      paymentMethod: payment,
+                                    );
 
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                backgroundColor: isDark ? const Color(0xFF161F30) : Colors.white,
-                                title: const Row(
-                                  children: [
-                                    Icon(Icons.check_circle, color: Color(0xFF10B981), size: 28),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Pesanan Terkirim!',
-                                      style: TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                                content: Text(
-                                  'Terima kasih, $name! Pesanan Anda di meja $table sebesar ${formatPrice(totalVal)} telah dibuat dengan metode pembayaran $payment.',
-                                  style: TextStyle(
-                                    color: isDark ? Colors.grey[300] : Colors.grey[800],
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      widget.onOrderSuccess();
-                                    },
-                                    child: const Text(
-                                      'Selesai',
-                                      style: TextStyle(
-                                        color: Color(0xFF10B981),
-                                        fontWeight: FontWeight.bold,
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        backgroundColor: isDark
+                                            ? const Color(0xFF161F30)
+                                            : Colors.white,
+                                        title: const Row(
+                                          children: [
+                                            Icon(
+                                              Icons.check_circle,
+                                              color: Color(0xFF10B981),
+                                              size: 28,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              'Pesanan Terkirim!',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        content: Text(
+                                          'Terima kasih, $name! Pesanan Anda di meja $table sebesar ${formatPrice(totalVal)} telah dibuat dengan metode pembayaran $payment.',
+                                          style: TextStyle(
+                                            color: isDark
+                                                ? Colors.grey[300]
+                                                : Colors.grey[800],
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              widget.onOrderSuccess();
+                                            },
+                                            child: const Text(
+                                              'Selesai',
+                                              style: TextStyle(
+                                                color: Color(0xFF10B981),
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        },
+                                    );
+                                  } else {
+                                    // QRIS / Debit: Proses ke Midtrans
+                                    _processMidtransPayment(
+                                      name,
+                                      table,
+                                      totalVal.toInt(),
+                                    );
+                                  }
+                                }
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF10B981),
                           foregroundColor: Colors.white,
@@ -344,13 +495,22 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: const Text(
-                          'Konfirmasi & Buat Pesanan',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                'Konfirmasi & Buat Pesanan',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
                     ),
                   ],
@@ -381,7 +541,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B).withOpacity(0.3) : Colors.grey[50],
+          color: isDark
+              ? const Color(0xFF1E293B).withOpacity(0.3)
+              : Colors.grey[50],
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
