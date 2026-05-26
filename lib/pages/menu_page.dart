@@ -26,9 +26,11 @@ class _MenuPageState extends State<MenuPage> {
       return item.category == _selectedCategory;
     }).toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 8.0),
           child: Column(
@@ -98,33 +100,37 @@ class _MenuPageState extends State<MenuPage> {
         ),
 
         // Menu items grid/list
-        Expanded(
-          child: filteredItems.isEmpty
-              ? Center(
-                  child: Text(
-                    'Tidak ada item menu',
-                    style: TextStyle(
-                      color: isDark ? Colors.grey[400] : Colors.grey[600],
-                    ),
-                  ),
-                )
-              : ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.only(top: 8.0),
-                  itemCount: filteredItems.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == filteredItems.length) {
-                      return const FooterWidget();
-                    }
-                    final item = filteredItems[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: _buildMenuItemCard(item, isDark),
-                    );
-                  },
+        if (filteredItems.isEmpty)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40.0),
+              child: Text(
+                'Tidak ada item menu',
+                style: TextStyle(
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
                 ),
-        ),
+              ),
+            ),
+          )
+        else
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            padding: const EdgeInsets.only(top: 8.0),
+            itemCount: filteredItems.length,
+            itemBuilder: (context, index) {
+              final item = filteredItems[index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: _buildMenuItemCard(item, isDark),
+              );
+            },
+          ),
+          
+        const SizedBox(height: 20),
+        const FooterWidget(),
       ],
+      ),
     );
   }
 

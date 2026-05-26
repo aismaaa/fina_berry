@@ -6,7 +6,7 @@ class FooterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       width: double.infinity,
       color: isDark ? const Color(0xFF0B0F19) : Colors.white,
@@ -71,7 +71,11 @@ class FooterWidget extends StatelessWidget {
                     color: Color(0xFF10B981),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.restaurant, color: Colors.white, size: 24),
+                  child: const Icon(
+                    Icons.restaurant,
+                    color: Colors.white,
+                    size: 24,
+                  ),
                 ),
               ),
             ),
@@ -103,14 +107,24 @@ class FooterWidget extends StatelessWidget {
         const SizedBox(height: 16),
         Text(
           'Nikmati cita rasa autentik dengan bahan-bahan pilihan terbaik. Kami berkomitmen menghadirkan pengalaman kuliner yang tak terlupakan untuk setiap momen spesial Anda.',
-          style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600], fontSize: 13, height: 1.5),
+          style: TextStyle(
+            color: isDark ? Colors.grey[400] : Colors.grey[600],
+            fontSize: 13,
+            height: 1.5,
+          ),
         ),
         const SizedBox(height: 20),
         Row(
           children: [
-            _buildSocialIcon(Icons.camera_alt_outlined, isDark), // Instagram placeholder
+            _buildSocialIcon(
+              Icons.camera_alt_outlined,
+              isDark,
+            ), // Instagram placeholder
             const SizedBox(width: 12),
-            _buildSocialIcon(Icons.chat_bubble_outline, isDark), // WhatsApp placeholder
+            _buildSocialIcon(
+              Icons.chat_bubble_outline,
+              isDark,
+            ), // WhatsApp placeholder
             const SizedBox(width: 12),
             _buildSocialIcon(Icons.facebook_outlined, isDark),
           ],
@@ -125,9 +139,15 @@ class FooterWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF161F30) : Colors.grey[50],
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: isDark ? Colors.grey[800]! : Colors.grey[300]!),
+        border: Border.all(
+          color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+        ),
       ),
-      child: Icon(icon, color: isDark ? Colors.grey[400] : Colors.grey[700], size: 18),
+      child: Icon(
+        icon,
+        color: isDark ? Colors.grey[400] : Colors.grey[700],
+        size: 18,
+      ),
     );
   }
 
@@ -188,7 +208,11 @@ class FooterWidget extends StatelessWidget {
         const SizedBox(height: 16),
         _buildContactItem(Icons.phone_outlined, '+62 812-3456-7890', isDark),
         const SizedBox(height: 16),
-        _buildContactItem(Icons.access_time_outlined, 'Setiap Hari · 08.00 - 22.00', isDark),
+        _buildContactItem(
+          Icons.access_time_outlined,
+          'Setiap Hari · 08.00 - 22.00',
+          isDark,
+        ),
       ],
     );
   }
@@ -209,7 +233,11 @@ class FooterWidget extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600], fontSize: 13, height: 1.5),
+            style: TextStyle(
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
+              fontSize: 13,
+              height: 1.5,
+            ),
           ),
         ),
       ],
@@ -226,10 +254,7 @@ class FooterWidget extends StatelessWidget {
             if (constraints.maxWidth > 500) {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildCopyright(isDark),
-                  _buildMadeWithLove(isDark),
-                ],
+                children: [_buildCopyright(isDark), _buildMadeWithLove(isDark)],
               );
             } else {
               return Column(
@@ -249,12 +274,18 @@ class FooterWidget extends StatelessWidget {
   Widget _buildCopyright(bool isDark) {
     return RichText(
       text: TextSpan(
-        style: TextStyle(color: isDark ? Colors.grey[500] : Colors.grey[600], fontSize: 12),
+        style: TextStyle(
+          color: isDark ? Colors.grey[500] : Colors.grey[600],
+          fontSize: 12,
+        ),
         children: const [
           TextSpan(text: '© 2026 '),
           TextSpan(
             text: 'Warung Fina Berry',
-            style: TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Color(0xFF10B981),
+              fontWeight: FontWeight.bold,
+            ),
           ),
           TextSpan(text: '. Semua hak cipta dilindungi.'),
         ],
@@ -270,7 +301,10 @@ class FooterWidget extends StatelessWidget {
         const SizedBox(width: 6),
         Text(
           'Dibuat dengan cinta untuk pelanggan kami',
-          style: TextStyle(color: isDark ? Colors.grey[500] : Colors.grey[600], fontSize: 12),
+          style: TextStyle(
+            color: isDark ? Colors.grey[500] : Colors.grey[600],
+            fontSize: 12,
+          ),
         ),
       ],
     );
