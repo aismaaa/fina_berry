@@ -27,9 +27,11 @@ class KeranjangPage extends StatelessWidget {
           )}';
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 8.0),
           child: Text(
@@ -44,19 +46,17 @@ class KeranjangPage extends StatelessWidget {
         ),
 
         // Cart items list
-        Expanded(
-          child: cartItems.isEmpty
-              ? _buildEmptyState(context, isDark)
-              : ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.only(top: 16.0),
-                  itemCount: cartItems.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == cartItems.length) {
-                      return const FooterWidget();
-                    }
-                    final cartItem = cartItems[index];
-                    final item = cartItem.item;
+        if (cartItems.isEmpty)
+          _buildEmptyState(context, isDark)
+        else
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            padding: const EdgeInsets.only(top: 16.0),
+            itemCount: cartItems.length,
+            itemBuilder: (context, index) {
+              final cartItem = cartItems[index];
+              final item = cartItem.item;
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -186,7 +186,6 @@ class KeranjangPage extends StatelessWidget {
                     );
                   },
                 ),
-        ),
 
         // Order Summary Section
         if (cartItems.isNotEmpty)
@@ -300,14 +299,20 @@ class KeranjangPage extends StatelessWidget {
               ],
             ),
           ),
+          
+        const SizedBox(height: 20),
+        const FooterWidget(),
       ],
+      ),
     );
   }
 
   Widget _buildEmptyState(BuildContext context, bool isDark) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 60.0),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.shopping_bag_outlined,
@@ -349,6 +354,7 @@ class KeranjangPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }
