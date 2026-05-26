@@ -6,10 +6,7 @@ import '../widgets/footer_widget.dart';
 class MenuPage extends StatefulWidget {
   final AppState appState;
 
-  const MenuPage({
-    super.key,
-    required this.appState,
-  });
+  const MenuPage({super.key, required this.appState});
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -48,7 +45,7 @@ class _MenuPageState extends State<MenuPage> {
               ),
               const SizedBox(height: 4),
               Text(
-                'Pilih menu favorit Anda',
+                'Silahkan Pilih menu favorit Anda',
                 style: TextStyle(
                   fontSize: 16,
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -85,7 +82,9 @@ class _MenuPageState extends State<MenuPage> {
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 250),
                       width: _getIndicatorWidth(context),
-                      margin: EdgeInsets.only(left: _getIndicatorOffset(context)),
+                      margin: EdgeInsets.only(
+                        left: _getIndicatorOffset(context),
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFF10B981),
                         borderRadius: BorderRadius.circular(2),
@@ -189,10 +188,8 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget _buildMenuItemCard(MenuItem item, bool isDark) {
-    final formattedPrice = 'Rp ${item.price.toInt().toString().replaceAllMapped(
-          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (Match m) => '${m[1]}.',
-        )}';
+    final formattedPrice =
+        'Rp ${item.price.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
@@ -214,7 +211,9 @@ class _MenuPageState extends State<MenuPage> {
           Stack(
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
                 child: Image.network(
                   item.imageUrl,
                   height: 180,
@@ -225,7 +224,11 @@ class _MenuPageState extends State<MenuPage> {
                       height: 180,
                       color: Colors.grey[300],
                       alignment: Alignment.center,
-                      child: const Icon(Icons.restaurant, size: 40, color: Colors.grey),
+                      child: const Icon(
+                        Icons.restaurant,
+                        size: 40,
+                        color: Colors.grey,
+                      ),
                     );
                   },
                 ),
@@ -235,7 +238,10 @@ class _MenuPageState extends State<MenuPage> {
                   top: 16,
                   left: 16,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF97316),
                       borderRadius: BorderRadius.circular(12),
@@ -300,7 +306,9 @@ class _MenuPageState extends State<MenuPage> {
                     widget.appState.addToCart(item);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('${item.name} berhasil ditambahkan ke keranjang!'),
+                        content: Text(
+                          '${item.name} berhasil ditambahkan ke keranjang!',
+                        ),
                         duration: const Duration(seconds: 1),
                         behavior: SnackBarBehavior.floating,
                         backgroundColor: const Color(0xFF10B981),
@@ -313,11 +321,7 @@ class _MenuPageState extends State<MenuPage> {
                       color: Color(0xFF10B981),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.add,
-                      color: Colors.white,
-                      size: 20,
-                    ),
+                    child: const Icon(Icons.add, color: Colors.white, size: 20),
                   ),
                 ),
               ],

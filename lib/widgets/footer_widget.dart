@@ -5,10 +5,11 @@ class FooterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dark aesthetic footer inspired by standard web/app premium layouts
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
       width: double.infinity,
-      color: const Color(0xFF0B0F19), // Match the dark theme background
+      color: isDark ? const Color(0xFF0B0F19) : Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -20,28 +21,28 @@ class FooterWidget extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(flex: 2, child: _buildBrandSection()),
+                    Expanded(flex: 2, child: _buildBrandSection(isDark)),
                     const SizedBox(width: 40),
-                    Expanded(flex: 1, child: _buildNavSection()),
+                    Expanded(flex: 1, child: _buildNavSection(isDark)),
                     const SizedBox(width: 40),
-                    Expanded(flex: 2, child: _buildContactSection()),
+                    Expanded(flex: 2, child: _buildContactSection(isDark)),
                   ],
                 ),
                 const SizedBox(height: 40),
-                _buildBottomSection(),
+                _buildBottomSection(isDark),
               ],
             );
           } else {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildBrandSection(),
+                _buildBrandSection(isDark),
                 const SizedBox(height: 32),
-                _buildNavSection(),
+                _buildNavSection(isDark),
                 const SizedBox(height: 32),
-                _buildContactSection(),
+                _buildContactSection(isDark),
                 const SizedBox(height: 40),
-                _buildBottomSection(),
+                _buildBottomSection(isDark),
               ],
             );
           }
@@ -50,7 +51,7 @@ class FooterWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildBrandSection() {
+  Widget _buildBrandSection(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -78,10 +79,10 @@ class FooterWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Fina Berry',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: isDark ? Colors.white : const Color(0xFF1F2937),
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -102,77 +103,77 @@ class FooterWidget extends StatelessWidget {
         const SizedBox(height: 16),
         Text(
           'Nikmati cita rasa autentik dengan bahan-bahan pilihan terbaik. Kami berkomitmen menghadirkan pengalaman kuliner yang tak terlupakan untuk setiap momen spesial Anda.',
-          style: TextStyle(color: Colors.grey[400], fontSize: 13, height: 1.5),
+          style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600], fontSize: 13, height: 1.5),
         ),
         const SizedBox(height: 20),
         Row(
           children: [
-            _buildSocialIcon(Icons.camera_alt_outlined), // Instagram placeholder
+            _buildSocialIcon(Icons.camera_alt_outlined, isDark), // Instagram placeholder
             const SizedBox(width: 12),
-            _buildSocialIcon(Icons.chat_bubble_outline), // WhatsApp placeholder
+            _buildSocialIcon(Icons.chat_bubble_outline, isDark), // WhatsApp placeholder
             const SizedBox(width: 12),
-            _buildSocialIcon(Icons.facebook_outlined),
+            _buildSocialIcon(Icons.facebook_outlined, isDark),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildSocialIcon(IconData icon) {
+  Widget _buildSocialIcon(IconData icon, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: const Color(0xFF161F30),
+        color: isDark ? const Color(0xFF161F30) : Colors.grey[50],
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey[800]!),
+        border: Border.all(color: isDark ? Colors.grey[800]! : Colors.grey[300]!),
       ),
-      child: Icon(icon, color: Colors.grey[400], size: 18),
+      child: Icon(icon, color: isDark ? Colors.grey[400] : Colors.grey[700], size: 18),
     );
   }
 
-  Widget _buildNavSection() {
+  Widget _buildNavSection(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'NAVIGASI',
           style: TextStyle(
-            color: Colors.white,
+            color: isDark ? Colors.white : const Color(0xFF1F2937),
             fontWeight: FontWeight.bold,
             letterSpacing: 1.2,
             fontSize: 12,
           ),
         ),
         const SizedBox(height: 16),
-        _buildFooterLink('Beranda'),
-        _buildFooterLink('Menu Kami'),
-        _buildFooterLink('Masuk'),
-        _buildFooterLink('Daftar Akun'),
+        _buildFooterLink('Beranda', isDark),
+        _buildFooterLink('Menu Kami', isDark),
+        _buildFooterLink('Masuk', isDark),
+        _buildFooterLink('Daftar Akun', isDark),
       ],
     );
   }
 
-  Widget _buildFooterLink(String title) {
+  Widget _buildFooterLink(String title, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Text(
         title,
         style: TextStyle(
-          color: Colors.grey[400],
+          color: isDark ? Colors.grey[400] : Colors.grey[600],
           fontSize: 13,
         ),
       ),
     );
   }
 
-  Widget _buildContactSection() {
+  Widget _buildContactSection(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'HUBUNGI KAMI',
           style: TextStyle(
-            color: Colors.white,
+            color: isDark ? Colors.white : const Color(0xFF1F2937),
             fontWeight: FontWeight.bold,
             letterSpacing: 1.2,
             fontSize: 12,
@@ -182,16 +183,17 @@ class FooterWidget extends StatelessWidget {
         _buildContactItem(
           Icons.location_on_outlined,
           "Warung Makan Fina Berry berada di kawasan D'LAS (Desa Wisata Lembah Asri), tepatnya di area dekat pintu keluar, Desa Serang, Kecamatan Karangreja, Kabupaten Purbalingga, Jawa Tengah.",
+          isDark,
         ),
         const SizedBox(height: 16),
-        _buildContactItem(Icons.phone_outlined, '+62 812-3456-7890'),
+        _buildContactItem(Icons.phone_outlined, '+62 812-3456-7890', isDark),
         const SizedBox(height: 16),
-        _buildContactItem(Icons.access_time_outlined, 'Setiap Hari · 08.00 - 22.00'),
+        _buildContactItem(Icons.access_time_outlined, 'Setiap Hari · 08.00 - 22.00', isDark),
       ],
     );
   }
 
-  Widget _buildContactItem(IconData icon, String text) {
+  Widget _buildContactItem(IconData icon, String text, bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -207,17 +209,17 @@ class FooterWidget extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: TextStyle(color: Colors.grey[400], fontSize: 13, height: 1.5),
+            style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600], fontSize: 13, height: 1.5),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildBottomSection() {
+  Widget _buildBottomSection(bool isDark) {
     return Column(
       children: [
-        Divider(color: Colors.grey[800]),
+        Divider(color: isDark ? Colors.grey[800] : Colors.grey[200]),
         const SizedBox(height: 20),
         LayoutBuilder(
           builder: (context, constraints) {
@@ -225,16 +227,16 @@ class FooterWidget extends StatelessWidget {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildCopyright(),
-                  _buildMadeWithLove(),
+                  _buildCopyright(isDark),
+                  _buildMadeWithLove(isDark),
                 ],
               );
             } else {
               return Column(
                 children: [
-                  _buildCopyright(),
+                  _buildCopyright(isDark),
                   const SizedBox(height: 12),
-                  _buildMadeWithLove(),
+                  _buildMadeWithLove(isDark),
                 ],
               );
             }
@@ -244,10 +246,10 @@ class FooterWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCopyright() {
+  Widget _buildCopyright(bool isDark) {
     return RichText(
       text: TextSpan(
-        style: TextStyle(color: Colors.grey[500], fontSize: 12),
+        style: TextStyle(color: isDark ? Colors.grey[500] : Colors.grey[600], fontSize: 12),
         children: const [
           TextSpan(text: '© 2026 '),
           TextSpan(
@@ -260,7 +262,7 @@ class FooterWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildMadeWithLove() {
+  Widget _buildMadeWithLove(bool isDark) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -268,7 +270,7 @@ class FooterWidget extends StatelessWidget {
         const SizedBox(width: 6),
         Text(
           'Dibuat dengan cinta untuk pelanggan kami',
-          style: TextStyle(color: Colors.grey[500], fontSize: 12),
+          style: TextStyle(color: isDark ? Colors.grey[500] : Colors.grey[600], fontSize: 12),
         ),
       ],
     );
