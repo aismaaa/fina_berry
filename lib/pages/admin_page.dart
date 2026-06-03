@@ -24,6 +24,7 @@ class _AdminPageState extends State<AdminPage> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   String? _errorMessage;
+  bool _isPasswordVisible = false;
 
   // Stock controller maps to track user edits
   final Map<String, TextEditingController> _stockControllers = {};
@@ -38,9 +39,9 @@ class _AdminPageState extends State<AdminPage> {
     super.dispose();
   }
 
-  void _handleLogin() {
+  Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      final success = widget.appState.login(
+      final success = await widget.appState.login(
         _usernameController.text,
         _passwordController.text,
       );
@@ -158,6 +159,31 @@ class _AdminPageState extends State<AdminPage> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.redAccent.withOpacity(0.5)),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 20),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Area Khusus Pegawai (Admin/Kasir). Pelanggan tidak perlu login.',
+                              style: TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 24),
 
                     // Username field
@@ -217,7 +243,7 @@ class _AdminPageState extends State<AdminPage> {
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _passwordController,
-                      obscureText: true,
+                      obscureText: !_isPasswordVisible,
                       style: TextStyle(
                         color: isDark ? Colors.white : Colors.black,
                       ),
@@ -226,7 +252,20 @@ class _AdminPageState extends State<AdminPage> {
                           Icons.lock_outline,
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
                         ),
-                        hintText: '•••••',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
+                        ),
+                        hintText: '••••••••',
                         hintStyle: TextStyle(
                           color: isDark ? Colors.grey[600] : Colors.grey[400],
                         ),

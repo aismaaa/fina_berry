@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AppState extends ChangeNotifier {
-  final String _baseUrl = 'http://192.168.101.22:8000/api';
+  final String _baseUrl = 'http://192.168.101.22:8080/api';
 
   AppState() {
     // Try to load initial data from Laravel backend on startup
@@ -23,6 +23,15 @@ class AppState extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.dark;
   ThemeMode get themeMode => _themeMode;
 
+  // Table state
+  String? _tableNumber;
+  String? get tableNumber => _tableNumber;
+
+  void setTableNumber(String tableNumber) {
+    _tableNumber = tableNumber;
+    notifyListeners();
+  }
+
   void toggleTheme() {
     _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
     notifyListeners();
@@ -32,15 +41,25 @@ class AppState extends ChangeNotifier {
   String? _currentUserRole; // null, 'admin', 'kasir'
   String? get currentUserRole => _currentUserRole;
 
-  bool login(String username, String password) {
-    if (username.toLowerCase() == 'admin' && password == 'admin') {
-      _currentUserRole = 'admin';
-      notifyListeners();
-      return true;
-    } else if (username.toLowerCase() == 'kasir' && password == 'kasir') {
-      _currentUserRole = 'kasir';
-      notifyListeners();
-      return true;
+  Future<bool> login(String username, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'email': '${username.toLowerCase()}@finaberry.com',
+          'password': password,
+        }),
+      ).timeout(const Duration(seconds: 4));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        _currentUserRole = data['user']['name'];
+        notifyListeners();
+        return true;
+      }
+    } catch (e) {
+      debugPrint('Login Error: $e');
     }
     return false;
   }
