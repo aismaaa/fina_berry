@@ -22,11 +22,18 @@ class CheckoutPage extends StatefulWidget {
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
-  final _nameController = TextEditingController(text: 'sobur');
-  final _tableController = TextEditingController(text: 'A4');
+  late TextEditingController _nameController;
+  late TextEditingController _tableController;
   final _formKey = GlobalKey<FormState>();
   String _selectedPaymentMethod = 'QRIS'; // Default to QRIS
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: 'sobur');
+    _tableController = TextEditingController(text: widget.appState.tableNumber ?? 'A4');
+  }
 
   @override
   void dispose() {

@@ -4,6 +4,7 @@ import 'pages/beranda_page.dart';
 import 'pages/menu_page.dart';
 import 'pages/keranjang_page.dart';
 import 'pages/admin_page.dart';
+import 'pages/scan_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,11 +19,18 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final AppState _appState = AppState();
+  bool _isScanned = false;
 
   @override
   void dispose() {
     _appState.dispose();
     super.dispose();
+  }
+
+  void _onScanSuccess() {
+    setState(() {
+      _isScanned = true;
+    });
   }
 
   @override
@@ -63,7 +71,12 @@ class _MyAppState extends State<MyApp> {
             cardColor: const Color(0xFF161F30),
             fontFamily: 'Montserrat',
           ),
-          home: MainLayout(appState: _appState),
+          home: _isScanned 
+              ? MainLayout(appState: _appState)
+              : ScanPage(
+                  appState: _appState, 
+                  onScanSuccess: _onScanSuccess,
+                ),
         );
       },
     );
