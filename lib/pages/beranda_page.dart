@@ -3,10 +3,12 @@ import '../widgets/footer_widget.dart';
 
 class BerandaPage extends StatelessWidget {
   final VoidCallback onNavigateToMenu;
+  final VoidCallback? onNavigateToHome;
 
   const BerandaPage({
     super.key,
     required this.onNavigateToMenu,
+    this.onNavigateToHome,
   });
 
   @override
@@ -201,7 +203,10 @@ class BerandaPage extends StatelessWidget {
               ],
             ),
           ),
-          const FooterWidget(),
+          FooterWidget(
+            onNavigateToHome: onNavigateToHome,
+            onNavigateToMenu: onNavigateToMenu,
+          ),
         ],
       ),
     );
