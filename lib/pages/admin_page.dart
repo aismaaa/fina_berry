@@ -8,11 +8,13 @@ import '../widgets/footer_widget.dart';
 class AdminPage extends StatefulWidget {
   final AppState appState;
   final VoidCallback onBackToHome;
+  final VoidCallback? onNavigateToMenu;
 
   const AdminPage({
     super.key,
     required this.appState,
     required this.onBackToHome,
+    this.onNavigateToMenu,
   });
 
   @override
@@ -89,7 +91,7 @@ class _AdminPageState extends State<AdminPage> {
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Image.asset(
-                'assets/images/logo fina berry.jpeg',
+                'assets/images/logo fina berry.png',
                 width: 80,
                 height: 80,
                 fit: BoxFit.cover,
@@ -355,7 +357,10 @@ class _AdminPageState extends State<AdminPage> {
           ],
         ),
           ),
-          const FooterWidget(),
+          FooterWidget(
+            onNavigateToHome: widget.onBackToHome,
+            onNavigateToMenu: widget.onNavigateToMenu,
+          ),
         ],
       ),
     );
