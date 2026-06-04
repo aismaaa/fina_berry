@@ -120,13 +120,25 @@ class _MainLayoutState extends State<MainLayout> {
 
     // List of screens matching the bottom tabs
     final List<Widget> screens = [
-      BerandaPage(onNavigateToMenu: _onNavigateToMenu),
-      MenuPage(appState: widget.appState),
-      KeranjangPage(
-        appState: widget.appState,
+      BerandaPage(
+        onNavigateToHome: _onNavigateToHome,
         onNavigateToMenu: _onNavigateToMenu,
       ),
-      AdminPage(appState: widget.appState, onBackToHome: _onNavigateToHome),
+      MenuPage(
+        appState: widget.appState,
+        onNavigateToHome: _onNavigateToHome,
+        onNavigateToMenu: _onNavigateToMenu,
+      ),
+      KeranjangPage(
+        appState: widget.appState,
+        onNavigateToHome: _onNavigateToHome,
+        onNavigateToMenu: _onNavigateToMenu,
+      ),
+      AdminPage(
+        appState: widget.appState,
+        onBackToHome: _onNavigateToHome,
+        onNavigateToMenu: _onNavigateToMenu,
+      ),
     ];
 
     return Scaffold(
@@ -142,7 +154,7 @@ class _MainLayoutState extends State<MainLayout> {
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.asset(
-                'assets/images/logo fina berry.jpeg',
+                'assets/images/logo fina berry.png',
                 width: 32,
                 height: 32,
                 fit: BoxFit.cover,
