@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../state/app_state.dart';
 import '../models/order_model.dart';
+import 'package:intl/intl.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 import '../models/menu_item.dart';
 import '../widgets/footer_widget.dart';
 
@@ -60,6 +64,62 @@ class _AdminPageState extends State<AdminPage> {
         });
       }
     }
+  }
+
+  Future<void> _printReceipt(OrderModel order) async {
+    final pdf = pw.Document();
+    final currencyFormatter = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+    final dateFormatter = DateFormat('dd MMM yyyy, HH:mm', 'id_ID');
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.roll80,
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Center(
+                child: pw.Text('WARUNG FINA BERRY', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+              ),
+              pw.SizedBox(height: 10),
+              pw.Text('Order ID: ${order.id}', style: const pw.TextStyle(fontSize: 10)),
+              pw.Text('Tanggal: ${dateFormatter.format(order.date)}', style: const pw.TextStyle(fontSize: 10)),
+              pw.Text('Pelanggan: ${order.customerName}', style: const pw.TextStyle(fontSize: 10)),
+              pw.Text('Meja: ${order.tableNumber}', style: const pw.TextStyle(fontSize: 10)),
+              pw.Divider(),
+              ...order.items.map((item) {
+                return pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Expanded(child: pw.Text('${item.item.name} x${item.quantity}', style: const pw.TextStyle(fontSize: 10))),
+                    pw.Text(currencyFormatter.format(item.totalPrice), style: const pw.TextStyle(fontSize: 10)),
+                  ],
+                );
+              }),
+              pw.Divider(),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('Total', style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
+                  pw.Text(currencyFormatter.format(order.total), style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
+                ],
+              ),
+              pw.SizedBox(height: 10),
+              pw.Center(child: pw.Text('Terima Kasih!', style: const pw.TextStyle(fontSize: 10))),
+            ],
+          );
+        },
+      ),
+    );
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+      name: 'Struk_${order.id}.pdf',
+    );
   }
 
   @override
@@ -420,12 +480,8 @@ class _AdminPageState extends State<AdminPage> {
                 text: role == 'admin' ? 'Analisis' : 'Antrean',
               ),
               Tab(
-                icon: Icon(
-                  role == 'admin'
-                      ? Icons.restaurant_menu
-                      : Icons.add_circle_outline,
-                ),
-                text: role == 'admin' ? 'Kelola Menu' : 'Tambah Menu',
+                icon: const Icon(Icons.restaurant_menu),
+                text: 'Kelola Menu',
               ),
               Tab(
                 icon: const Icon(Icons.inventory_2_outlined),
@@ -824,6 +880,27 @@ class _AdminPageState extends State<AdminPage> {
                       child: const Text('Terima Pembayaran'),
                     ),
                   ],
+                  if (order.status == OrderStatus.completed || order.status == OrderStatus.processing) ...[
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        _printReceipt(order);
+                      },
+                      icon: const Icon(Icons.print, size: 16),
+                      label: const Text('Cetak Struk'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF3B82F6),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ],
@@ -833,114 +910,104 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
-  // --- TAB 2: MENU MANAGEMENT (ADMIN) OR ADD MENU FORM (KASIR) ---
   Widget _buildTabMenuManagement(String role, bool isDark) {
-    if (role == 'admin') {
-      final items = widget.appState.menuItems;
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: const Color(0xFF10B981),
-          foregroundColor: Colors.white,
-          child: const Icon(Icons.add),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                backgroundColor: isDark ? const Color(0xFF161F30) : Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                content: SizedBox(
-                  width: 400,
-                  child: SingleChildScrollView(child: _AddMenuFormWidget(appState: widget.appState, isDark: isDark)),
-                ),
+    final items = widget.appState.menuItems;
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF10B981),
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              backgroundColor: isDark ? const Color(0xFF161F30) : Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              content: SizedBox(
+                width: 400,
+                child: SingleChildScrollView(child: _AddMenuFormWidget(appState: widget.appState, isDark: isDark)),
               ),
-            );
-          },
-        ),
-        body: ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.all(24),
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF161F30) : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      item.imageUrl,
-                      width: 60,
-                      height: 60,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        width: 60,
-                        height: 60,
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.fastfood, color: Colors.grey),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.name,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.grey[900],
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${item.category} • Rp ${item.price.toInt()}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: isDark ? Colors.grey[400] : Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.redAccent,
-                    ),
-                    onPressed: () {
-                      widget.appState.removeMenuItem(item.id);
-                    },
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      );
-    } else {
-      // Kasir menu add form
-      return SingleChildScrollView(
+            ),
+          );
+        },
+      ),
+      body: ListView.builder(
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(24),
-        child: _AddMenuFormWidget(appState: widget.appState, isDark: isDark),
-      );
-    }
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final item = items[index];
+          return Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF161F30) : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    item.imageUrl,
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      width: 60,
+                      height: 60,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.fastfood, color: Colors.grey),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.name,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.grey[900],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${item.category} • Rp ${item.price.toInt()}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.delete_outline,
+                    color: Colors.redAccent,
+                  ),
+                  onPressed: () {
+                    widget.appState.removeMenuItem(item.id);
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 
   // --- TAB 3: STOCK INVENTORY (ADMIN & KASIR) ---

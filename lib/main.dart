@@ -5,6 +5,8 @@ import 'pages/menu_page.dart';
 import 'pages/keranjang_page.dart';
 import 'pages/admin_page.dart';
 import 'pages/scan_page.dart';
+import 'pages/chat_screen.dart';
+import 'pages/riwayat_transaksi_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -113,6 +115,61 @@ class _MainLayoutState extends State<MainLayout> {
     });
   }
 
+  Widget _buildChatFAB(bool isDark) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF10B981), Color(0xFF059669)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF10B981).withOpacity(0.45),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () {
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (_, animation, __) => const ChatScreen(),
+                transitionsBuilder: (_, animation, __, child) {
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0, 1),
+                      end: Offset.zero,
+                    ).animate(
+                      CurvedAnimation(
+                          parent: animation, curve: Curves.easeOutCubic),
+                    ),
+                    child: child,
+                  );
+                },
+                transitionDuration: const Duration(milliseconds: 320),
+              ),
+            );
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(14),
+            child: Icon(
+              Icons.smart_toy_outlined,
+              color: Colors.white,
+              size: 26,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -134,6 +191,9 @@ class _MainLayoutState extends State<MainLayout> {
         onNavigateToHome: _onNavigateToHome,
         onNavigateToMenu: _onNavigateToMenu,
       ),
+      RiwayatTransaksiPage(
+        appState: widget.appState,
+      ),
       AdminPage(
         appState: widget.appState,
         onBackToHome: _onNavigateToHome,
@@ -142,6 +202,9 @@ class _MainLayoutState extends State<MainLayout> {
     ];
 
     return Scaffold(
+      // Chat FAB — opens AI chatbot
+      floatingActionButton: _buildChatFAB(isDark),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       // Top AppBar matching the screenshots
       appBar: AppBar(
         backgroundColor: isDark
@@ -277,9 +340,9 @@ class _MainLayoutState extends State<MainLayout> {
           unselectedItemColor: isDark ? Colors.grey[600] : Colors.grey[400],
           selectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 12,
+            fontSize: 10,
           ),
-          unselectedLabelStyle: const TextStyle(fontSize: 12),
+          unselectedLabelStyle: const TextStyle(fontSize: 10),
           items: [
             const BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
@@ -357,6 +420,11 @@ class _MainLayoutState extends State<MainLayout> {
               label: 'Keranjang',
             ),
             const BottomNavigationBarItem(
+              icon: Icon(Icons.history_outlined),
+              activeIcon: Icon(Icons.history),
+              label: 'Riwayat',
+            ),
+            const BottomNavigationBarItem(
               icon: Icon(Icons.grid_view_outlined),
               activeIcon: Icon(Icons.grid_view),
               label: 'Admin',
@@ -367,3 +435,4 @@ class _MainLayoutState extends State<MainLayout> {
     );
   }
 }
+

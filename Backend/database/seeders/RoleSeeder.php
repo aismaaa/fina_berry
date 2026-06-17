@@ -14,15 +14,15 @@ class RoleSeeder extends Seeder
     {
         \App\Models\Role::create([
             'name' => 'admin',
-            'description' => 'Administrator with full access',
+            'description' => 'Administrator dengan akses penuh',
         ]);
         \App\Models\Role::create([
-            'name' => 'manager',
-            'description' => 'Manager with limited access',
+            'name' => 'kasir',
+            'description' => 'Kasir yang mengelola menu, pesanan, pembayaran, stok, dan laporan',
         ]);
         \App\Models\Role::create([
             'name' => 'user',
-            'description' => 'Regular user with basic access',
+            'description' => 'Pengguna biasa',
         ]);
     }
 }
