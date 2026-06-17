@@ -5,8 +5,15 @@ import '../widgets/footer_widget.dart';
 
 class MenuPage extends StatefulWidget {
   final AppState appState;
+  final VoidCallback? onNavigateToHome;
+  final VoidCallback? onNavigateToMenu;
 
-  const MenuPage({super.key, required this.appState});
+  const MenuPage({
+    super.key,
+    required this.appState,
+    this.onNavigateToHome,
+    this.onNavigateToMenu,
+  });
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -128,7 +135,10 @@ class _MenuPageState extends State<MenuPage> {
           ),
           
         const SizedBox(height: 20),
-        const FooterWidget(),
+        FooterWidget(
+          onNavigateToHome: widget.onNavigateToHome,
+          onNavigateToMenu: widget.onNavigateToMenu,
+        ),
       ],
       ),
     );
