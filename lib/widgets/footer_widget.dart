@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class FooterWidget extends StatelessWidget {
-  const FooterWidget({super.key});
+  final VoidCallback? onNavigateToHome;
+  final VoidCallback? onNavigateToMenu;
+
+  const FooterWidget({
+    super.key,
+    this.onNavigateToHome,
+    this.onNavigateToMenu,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +67,7 @@ class FooterWidget extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Image.asset(
-                'assets/images/logo fina berry.jpeg',
+                'assets/images/logo fina berry.png',
                 width: 40,
                 height: 40,
                 fit: BoxFit.cover,
@@ -165,22 +172,29 @@ class FooterWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        _buildFooterLink('Beranda', isDark),
-        _buildFooterLink('Menu Kami', isDark),
-        _buildFooterLink('Masuk', isDark),
-        _buildFooterLink('Daftar Akun', isDark),
+        _buildFooterLink('Beranda', isDark, onTap: onNavigateToHome),
+        _buildFooterLink('Menu Kami', isDark, onTap: onNavigateToMenu),
+       
       ],
     );
   }
 
-  Widget _buildFooterLink(String title, bool isDark) {
+  Widget _buildFooterLink(String title, bool isDark, {VoidCallback? onTap}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: isDark ? Colors.grey[400] : Colors.grey[600],
-          fontSize: 13,
+      child: InkWell(
+        onTap: onTap,
+        hoverColor: Colors.transparent,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        child: Text(
+          title,
+          style: TextStyle(
+            color: isDark ? Colors.grey[400] : Colors.grey[600],
+            fontSize: 13,
+            decoration: onTap != null ? TextDecoration.underline : null,
+            decorationColor: isDark ? Colors.grey[400] : Colors.grey[600],
+          ),
         ),
       ),
     );

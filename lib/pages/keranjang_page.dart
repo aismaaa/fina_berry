@@ -6,11 +6,13 @@ import '../widgets/footer_widget.dart';
 class KeranjangPage extends StatelessWidget {
   final AppState appState;
   final VoidCallback onNavigateToMenu;
+  final VoidCallback? onNavigateToHome;
 
   const KeranjangPage({
     super.key,
     required this.appState,
     required this.onNavigateToMenu,
+    this.onNavigateToHome,
   });
 
   @override
@@ -252,6 +254,14 @@ class KeranjangPage extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) => CheckoutPage(
                             appState: appState,
+                            onNavigateToHome: () {
+                              Navigator.pop(context);
+                              if (onNavigateToHome != null) onNavigateToHome!();
+                            },
+                            onNavigateToMenu: () {
+                              Navigator.pop(context);
+                              onNavigateToMenu();
+                            },
                             onOrderSuccess: () {
                               Navigator.pop(context); // Pop checkout page
                               onNavigateToMenu(); // Go to Menu
@@ -301,7 +311,10 @@ class KeranjangPage extends StatelessWidget {
           ),
           
         const SizedBox(height: 20),
-        const FooterWidget(),
+        FooterWidget(
+          onNavigateToHome: onNavigateToHome,
+          onNavigateToMenu: onNavigateToMenu,
+        ),
       ],
       ),
     );
