@@ -30,14 +30,13 @@ class AuthController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'api_token' => Str::random(60),
+
             ]);
 
             return response()->json([
                 'message' => 'User registered successfully',
                 'user' => $user,
-                'access_token' => $user->api_token,
-                'token_type' => 'Bearer',
+
             ], 201);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Registration failed'], 500);
@@ -65,15 +64,6 @@ class AuthController extends Controller
                 return response()->json(['error' => 'Invalid credentials'], 401);
             }
 
-            // Generate new token
-            $user->api_token = Str::random(60);
-            $user->save();
-
-            return response()->json([
-                'message' => 'Login successful',
-                'user' => $user,
-                'access_token' => $user->api_token,
-                'token_type' => 'Bearer',
             ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Login failed'], 500);
@@ -85,15 +75,6 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        try {
-            // Clear the API token
-            $user = $request->user();
-            $user->api_token = null;
-            $user->save();
 
-            return response()->json(['message' => 'Logout successful'], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Logout failed'], 500);
-        }
     }
 }
