@@ -56,63 +56,137 @@ class _CheckoutPageState extends State<CheckoutPage> {
     });
 
     try {
-      // Menggunakan public Sandbox Key untuk testing sementara
-      const serverKey = 'SB-Mid-server-ToO7zCEY0tUv2VIfB2a1K-Iu';
-      final String basicAuth =
-          'Basic ${base64Encode(utf8.encode('$serverKey:'))}';
+      // Panggil backend Laravel kita yang sudah terintegrasi dengan Midtrans
+      final items = widget.appState.cartItems.map((cartItem) => {
+        'menu_id': cartItem.item.id,
+        'quantity': cartItem.quantity,
+        'price': cartItem.item.price,
+      }).toList();
 
-      // Menggunakan proxy CORS karena web browser (Chrome) memblokir request langsung (CORS)
       final response = await http.post(
-        Uri.parse(
-          'https://corsproxy.io/?https://app.sandbox.midtrans.com/snap/v1/transactions',
-        ),
+        Uri.parse('${widget.appState.baseUrl}/orders'),
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': basicAuth,
         },
         body: jsonEncode({
-          "transaction_details": {
-            "order_id": "ORDER-${DateTime.now().millisecondsSinceEpoch}",
-            "gross_amount": amount,
-          },
-          "customer_details": {
-            "first_name": name,
-            "email": "customer@example.com",
-          },
+          'customerName': name,
+          'tableNumber': table,
+          'paymentMethod': _selectedPaymentMethod,
+          'total': amount,
+          'items': items,
         }),
-      );
+      ).timeout(const Duration(seconds: 15));
 
       final data = jsonDecode(response.body);
 
-      if (response.statusCode == 201 && data['redirect_url'] != null) {
-        // Kosongkan keranjang
-        widget.appState.checkout(
-          customerName: name,
-          tableNumber: table,
-          paymentMethod: _selectedPaymentMethod,
-        );
+      if ((response.statusCode == 200 || response.statusCode == 201) &&
+          data['redirect_url'] != null) {
+        // Kosongkan keranjang lokal setelah order berhasil dibuat
+        widget.appState.clearCart();
 
-        // Buka URL Pembayaran di Browser
+        final orderId = data['id']?.toString() ?? '-';
+        final orderTotal = data['total']?.toString() ?? amount.toString();
+
+        // Buka URL Pembayaran Midtrans di browser eksternal
         final redirectUrl = Uri.parse(data['redirect_url']);
-        if (!await launchUrl(
-          redirectUrl,
-          mode: LaunchMode.externalApplication,
-        )) {
+        if (!await launchUrl(redirectUrl, mode: LaunchMode.externalApplication)) {
           throw Exception('Tidak dapat membuka halaman pembayaran');
         }
 
-        // Asumsikan sukses setelah membuka browser
+        // Refresh orders di background (agar muncul di kasir)
+        widget.appState.fetchOrders();
+
         if (mounted) {
+          // Tampilkan dialog notifikasi pembayaran
+          await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) => AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              backgroundColor: Theme.of(ctx).brightness == Brightness.dark
+                  ? const Color(0xFF161F30)
+                  : Colors.white,
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF10B981).withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.check_circle, color: Color(0xFF10B981), size: 56),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Pesanan Berhasil Dibuat!',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Pesanan #$orderId telah dikirim ke dapur.\nSelesaikan pembayaran di halaman yang baru dibuka.',
+                    style: TextStyle(
+                      color: Colors.grey[500],
+                      fontSize: 13,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Total: Rp ${int.tryParse(orderTotal.split('.').first)?.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.') ?? orderTotal}',
+                    style: const TextStyle(
+                      color: Color(0xFF10B981),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF10B981),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: () => Navigator.pop(ctx),
+                      child: const Text('OK, Mengerti', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
           widget.onOrderSuccess();
         }
-      } else {
+
+      } else if ((response.statusCode == 200 || response.statusCode == 201) &&
+          data['midtrans_error'] != null) {
+        // Order berhasil dibuat tapi Midtrans error
+        widget.appState.clearCart();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                'Gagal: ${data['error_messages'] ?? "Cek Server Key Midtrans Anda"}',
-              ),
+              content: Text('Order dibuat, tapi pembayaran online gagal: ${data['midtrans_error']}'),
+              backgroundColor: Colors.orange,
+              duration: const Duration(seconds: 5),
+            ),
+          );
+          widget.onOrderSuccess();
+        }
+      } else {
+        final errorMsg = data['error_messages'] != null
+            ? data['error_messages'].toString()
+            : data['details'] ?? data['error'] ?? 'Gagal membuat pesanan';
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Gagal: $errorMsg'),
               backgroundColor: Colors.red,
             ),
           );
@@ -400,20 +474,28 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Total Pembayaran',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        Expanded(
+                          child: Text(
+                            'Total Pembayaran',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.grey[400] : Colors.grey[600],
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        Text(
-                          formatPrice(widget.appState.cartTotal),
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF10B981),
+                        const SizedBox(width: 12),
+                        Flexible(
+                          child: Text(
+                            formatPrice(widget.appState.cartTotal),
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF10B981),
+                            ),
+                            textAlign: TextAlign.end,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -458,10 +540,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                               size: 28,
                                             ),
                                             SizedBox(width: 8),
-                                            Text(
-                                              'Pesanan Terkirim!',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
+                                            Expanded(
+                                              child: Text(
+                                                'Pesanan Terkirim!',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
                                           ],

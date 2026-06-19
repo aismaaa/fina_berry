@@ -103,8 +103,10 @@ class ScanPage extends StatelessWidget {
                       elevation: 4,
                       shadowColor: const Color(0xFF10B981).withOpacity(0.4),
                     ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: const Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 12,
                       children: [
                         Text(
                           'Lihat Menu',
@@ -114,7 +116,7 @@ class ScanPage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(width: 12),
+
                         Icon(
                           Icons.restaurant_menu,
                           color: Colors.white,
