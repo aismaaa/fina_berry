@@ -74,8 +74,10 @@ class BerandaPage extends StatelessWidget {
                           elevation: 4,
                           shadowColor: const Color(0xFF10B981).withOpacity(0.4),
                         ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        child: const Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 8,
                           children: [
                             Text(
                               'Pesan Sekarang',
@@ -84,7 +86,6 @@ class BerandaPage extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(width: 8),
                             Icon(Icons.arrow_forward, size: 18),
                           ],
                         ),

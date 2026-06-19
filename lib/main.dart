@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'state/app_state.dart';
 import 'pages/beranda_page.dart';
 import 'pages/menu_page.dart';
@@ -8,7 +9,9 @@ import 'pages/scan_page.dart';
 import 'pages/chat_screen.dart';
 import 'pages/riwayat_transaksi_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null);
   runApp(const MyApp());
 }
 
@@ -96,6 +99,7 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
+  Offset? _fabPosition;
 
   void _onNavigateToMenu() {
     setState(() {
@@ -201,11 +205,13 @@ class _MainLayoutState extends State<MainLayout> {
       ),
     ];
 
-    return Scaffold(
-      // Chat FAB — opens AI chatbot
-      floatingActionButton: _buildChatFAB(isDark),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      // Top AppBar matching the screenshots
+    final screenSize = MediaQuery.of(context).size;
+    _fabPosition ??= Offset(screenSize.width - 80, screenSize.height - 160);
+
+    return Stack(
+      children: [
+        Scaffold(
+          // Top AppBar matching the screenshots
       appBar: AppBar(
         backgroundColor: isDark
             ? const Color(0xFF0B0F19)
@@ -238,12 +244,15 @@ class _MainLayoutState extends State<MainLayout> {
               ),
             ),
             const SizedBox(width: 8),
-            Text(
-              'Fina Berry',
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                fontSize: 20,
-                color: isDark ? Colors.white : Colors.grey[900],
+            Flexible(
+              child: Text(
+                'Fina Berry',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 20,
+                  color: isDark ? Colors.white : Colors.grey[900],
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -432,6 +441,23 @@ class _MainLayoutState extends State<MainLayout> {
           ],
         ),
       ),
+    ),
+        Positioned(
+          left: _fabPosition!.dx,
+          top: _fabPosition!.dy,
+          child: GestureDetector(
+            onPanUpdate: (details) {
+              setState(() {
+                _fabPosition = Offset(
+                  _fabPosition!.dx + details.delta.dx,
+                  _fabPosition!.dy + details.delta.dy,
+                );
+              });
+            },
+            child: _buildChatFAB(isDark),
+          ),
+        ),
+      ],
     );
   }
 }

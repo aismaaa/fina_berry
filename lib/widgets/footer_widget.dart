@@ -87,27 +87,31 @@ class FooterWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Fina Berry',
-                  style: TextStyle(
-                    color: isDark ? Colors.white : const Color(0xFF1F2937),
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Fina Berry',
+                    style: TextStyle(
+                      color: isDark ? Colors.white : const Color(0xFF1F2937),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                Text(
-                  'WARUNG MAKAN',
-                  style: TextStyle(
-                    color: const Color(0xFF10B981),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.2,
+                  Text(
+                    'WARUNG MAKAN',
+                    style: TextStyle(
+                      color: const Color(0xFF10B981),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.2,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -268,7 +272,11 @@ class FooterWidget extends StatelessWidget {
             if (constraints.maxWidth > 500) {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [_buildCopyright(isDark), _buildMadeWithLove(isDark)],
+                children: [
+                  Expanded(child: _buildCopyright(isDark)),
+                  const SizedBox(width: 16),
+                  Flexible(child: _buildMadeWithLove(isDark)),
+                ],
               );
             } else {
               return Column(
@@ -313,11 +321,14 @@ class FooterWidget extends StatelessWidget {
       children: [
         const Icon(Icons.favorite, color: Colors.redAccent, size: 14),
         const SizedBox(width: 6),
-        Text(
-          'Dibuat dengan cinta untuk pelanggan kami',
-          style: TextStyle(
-            color: isDark ? Colors.grey[500] : Colors.grey[600],
-            fontSize: 12,
+        Flexible(
+          child: Text(
+            'Dibuat dengan cinta untuk pelanggan kami',
+            style: TextStyle(
+              color: isDark ? Colors.grey[500] : Colors.grey[600],
+              fontSize: 12,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
