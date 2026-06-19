@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -29,12 +30,13 @@ class AuthController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role' => $request->filled('role') ? $request->role : 'kasir',
+
             ]);
 
             return response()->json([
                 'message' => 'User registered successfully',
                 'user' => $user,
+
             ], 201);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Registration failed'], 500);
@@ -76,6 +78,6 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        return response()->json(['message' => 'Logout successful'], 200);
+
     }
 }
