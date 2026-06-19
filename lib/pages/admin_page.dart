@@ -75,7 +75,7 @@ class _AdminPageState extends State<AdminPage> {
         });
       } else {
         setState(() {
-          _errorMessage = 'Username atau Password salah!';
+          _errorMessage = widget.appState.lastLoginError ?? 'Username atau Password salah!';
         });
       }
     }
