@@ -18,7 +18,7 @@ class AppState extends ChangeNotifier {
     fetchInitialData();
   }
 
-  String _formatImageUrl(dynamic url) {
+   String _formatImageUrl(dynamic url) {
     if (url == null) return '';
     String strUrl = url.toString();
     if (strUrl.startsWith('/')) {
@@ -48,33 +48,47 @@ class AppState extends ChangeNotifier {
   }
 
   void toggleTheme() {
-    _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+    _themeMode = _themeMode == ThemeMode.dark
+        ? ThemeMode.light
+        : ThemeMode.dark;
     notifyListeners();
   }
 
   // Auth State
   String? _currentUserRole; // null, 'admin', 'kasir'
   String? get currentUserRole => _currentUserRole;
+  String? _lastLoginError;
+  String? get lastLoginError => _lastLoginError;
 
   Future<bool> login(String username, String password) async {
+    _lastLoginError = null;
     try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'email': '${username.toLowerCase()}@finaberry.com',
-          'password': password,
-        }),
-      ).timeout(const Duration(seconds: 4));
+      final response = await http
+          .post(
+            Uri.parse('$_baseUrl/login'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({
+              'email': '${username.toLowerCase()}@finaberry.com',
+              'password': password,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         _currentUserRole = data['user']['role'];
         notifyListeners();
         return true;
+      } else {
+        final body = response.body;
+        _lastLoginError = 'Server: ${response.statusCode} - $body';
+        debugPrint('Login failed: ${response.statusCode} ${response.body}');
+        notifyListeners();
       }
     } catch (e) {
+      _lastLoginError = 'Error: $e';
       debugPrint('Login Error: $e');
+      notifyListeners();
     }
     return false;
   }
@@ -183,7 +197,9 @@ class AppState extends ChangeNotifier {
   // ─── Fetch menu: Backend → Cache (merge) → Default ──────────────────────────
   Future<void> fetchMenus() async {
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/menus')).timeout(const Duration(seconds: 4));
+      final response = await http
+          .get(Uri.parse('$_baseUrl/menus'))
+          .timeout(const Duration(seconds: 4));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
 
@@ -221,7 +237,9 @@ class AppState extends ChangeNotifier {
         return;
       }
     } catch (e) {
-      debugPrint('Sync warning: Cannot fetch menus from backend, using local data. Error: $e');
+      debugPrint(
+        'Sync warning: Cannot fetch menus from backend, using local data. Error: $e',
+      );
     }
 
     // Layer 2: load dari cache lokal
@@ -263,7 +281,10 @@ class AppState extends ChangeNotifier {
     // LANGKAH 2: Coba sinkronisasi ke backend (opsional, tidak blokir UI)
     try {
       if (imageBytes != null) {
-        var request = http.MultipartRequest('POST', Uri.parse('$_baseUrl/menus'));
+        var request = http.MultipartRequest(
+          'POST',
+          Uri.parse('$_baseUrl/menus'),
+        );
         request.fields['name'] = item.name;
         request.fields['description'] = item.description;
         request.fields['price'] = item.price.toString();
@@ -364,16 +385,32 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> removeMenuItem(String id) async {
-    try {
-      final response = await http.delete(
-        Uri.parse('$_baseUrl/menus/$id'),
-      ).timeout(const Duration(seconds: 4));
+    // If the id looks like a local-only id (created on client), remove locally
+    if (id.startsWith('menu-')) {
+      _menuItems.removeWhere((item) => item.id == id);
+      notifyListeners();
+      return;
+    }
 
-      if (response.statusCode == 200) {
+    try {
+      final response = await http
+          .delete(Uri.parse('$_baseUrl/menus/$id'))
+          .timeout(const Duration(seconds: 4));
+
+      // Treat any successful 2xx response as deleted and refresh from server
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        debugPrint('Delete successful for id=$id (status ${response.statusCode})');
         await fetchMenus();
+        return;
       }
+
+      // Non-2xx: log and refresh from server to keep UI in sync (don't remove locally)
+      debugPrint('Delete failed for id=$id, status=${response.statusCode}, body=${response.body}');
+      await fetchMenus();
     } catch (e) {
-      debugPrint('Sync warning: Cannot delete menu item from backend, running locally. Error: $e');
+      debugPrint(
+        'Sync warning: Cannot delete menu item from backend, running locally. Error: $e',
+      );
       _menuItems.removeWhere((item) => item.id == id);
       notifyListeners();
     }
@@ -385,14 +422,17 @@ class AppState extends ChangeNotifier {
 
   int get cartCount => _cartItems.fold(0, (sum, item) => sum + item.quantity);
 
-  double get cartSubtotal => _cartItems.fold(0.0, (sum, item) => sum + item.totalPrice);
+  double get cartSubtotal =>
+      _cartItems.fold(0.0, (sum, item) => sum + item.totalPrice);
 
   double get cartTax => 0.0; // Pajak & Layanan Rp 0 as per design
 
   double get cartTotal => cartSubtotal + cartTax;
 
   void addToCart(MenuItem item) {
-    final existingIndex = _cartItems.indexWhere((cartItem) => cartItem.item.id == item.id);
+    final existingIndex = _cartItems.indexWhere(
+      (cartItem) => cartItem.item.id == item.id,
+    );
     if (existingIndex >= 0) {
       _cartItems[existingIndex].quantity += 1;
     } else {
@@ -405,9 +445,11 @@ class AppState extends ChangeNotifier {
     _cartItems.removeWhere((cartItem) => cartItem.item.id == itemId);
     notifyListeners();
   }
-
+  
   void incrementQuantity(String itemId) {
-    final index = _cartItems.indexWhere((cartItem) => cartItem.item.id == itemId);
+    final index = _cartItems.indexWhere(
+      (cartItem) => cartItem.item.id == itemId,
+    );
     if (index >= 0) {
       _cartItems[index].quantity += 1;
       notifyListeners();
@@ -415,7 +457,9 @@ class AppState extends ChangeNotifier {
   }
 
   void decrementQuantity(String itemId) {
-    final index = _cartItems.indexWhere((cartItem) => cartItem.item.id == itemId);
+    final index = _cartItems.indexWhere(
+      (cartItem) => cartItem.item.id == itemId,
+    );
     if (index >= 0) {
       if (_cartItems[index].quantity > 1) {
         _cartItems[index].quantity -= 1;
@@ -430,14 +474,15 @@ class AppState extends ChangeNotifier {
     _cartItems.clear();
     notifyListeners();
   }
-
-  // Order state
   List<OrderModel> _orders = [];
+
   List<OrderModel> get orders => List.unmodifiable(_orders);
 
   Future<void> fetchOrders() async {
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/orders')).timeout(const Duration(seconds: 4));
+      final response = await http
+          .get(Uri.parse('$_baseUrl/orders'))
+          .timeout(const Duration(seconds: 4));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         _orders = data.map((jsonOrder) {
@@ -491,7 +536,8 @@ class AppState extends ChangeNotifier {
   }) async {
     if (_cartItems.isEmpty) return;
 
-    final String localId = 'ORD-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+    final String localId =
+        'ORD-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
     final List<CartItem> cachedItems = List.from(_cartItems);
     final double cachedTotal = cartTotal;
 
@@ -507,17 +553,19 @@ class AppState extends ChangeNotifier {
         };
       }).toList();
 
-      final response = await http.post(
-        Uri.parse('$_baseUrl/orders'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'customerName': customerName,
-          'tableNumber': tableNumber,
-          'paymentMethod': paymentMethod,
-          'total': cachedTotal,
-          'items': itemsList,
-        }),
-      ).timeout(const Duration(seconds: 4));
+      final response = await http
+          .post(
+            Uri.parse('$_baseUrl/orders'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({
+              'customerName': customerName,
+              'tableNumber': tableNumber,
+              'paymentMethod': paymentMethod,
+              'total': cachedTotal,
+              'items': itemsList,
+            }),
+          )
+          .timeout(const Duration(seconds: 4));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = json.decode(response.body);
@@ -532,7 +580,9 @@ class AppState extends ChangeNotifier {
         throw Exception('Status code: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('Sync warning: Cannot submit order to backend, running locally. Error: $e');
+      debugPrint(
+        'Sync warning: Cannot submit order to backend, running locally. Error: $e',
+      );
       // If server is offline, save order in local memory so the queue is still functional
       final fallbackOrder = OrderModel(
         id: localId,
@@ -560,11 +610,13 @@ class AppState extends ChangeNotifier {
     }
 
     try {
-      final response = await http.patch(
-        Uri.parse('$_baseUrl/orders/$orderId/status'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'status': statusStr}),
-      ).timeout(const Duration(seconds: 4));
+      final response = await http
+          .patch(
+            Uri.parse('$_baseUrl/orders/$orderId/status'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({'status': statusStr}),
+          )
+          .timeout(const Duration(seconds: 4));
 
       if (response.statusCode == 200) {
         await fetchOrders();
@@ -572,7 +624,9 @@ class AppState extends ChangeNotifier {
         throw Exception('Status code: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('Sync warning: Cannot update order status on backend, running locally. Error: $e');
+      debugPrint(
+        'Sync warning: Cannot update order status on backend, running locally. Error: $e',
+      );
       final index = _orders.indexWhere((order) => order.id == orderId);
       if (index >= 0) {
         _orders[index].status = status;
@@ -589,22 +643,80 @@ class AppState extends ChangeNotifier {
   int get totalOrdersCount => _orders.length;
 
   int get activeOrdersCount => _orders
-      .where((order) => order.status == OrderStatus.pending || order.status == OrderStatus.processing)
+      .where(
+        (order) =>
+            order.status == OrderStatus.pending ||
+            order.status == OrderStatus.processing,
+      )
       .length;
 
   int get availableMenuItemsCount => _menuItems.length;
 
   // Raw materials stock state
   final List<BahanBaku> _bahanBakuList = [
-    BahanBaku(id: 'bb1', name: 'Daging Sapi Segar', stockAmount: 15.5, unit: 'kg', minimumStock: 5.0),
-    BahanBaku(id: 'bb2', name: 'Daging Ayam Kampung', stockAmount: 24.0, unit: 'pcs', minimumStock: 10.0),
-    BahanBaku(id: 'bb3', name: 'Beras Premium', stockAmount: 50.0, unit: 'kg', minimumStock: 15.0),
-    BahanBaku(id: 'bb4', name: 'Udang Pancet', stockAmount: 8.0, unit: 'kg', minimumStock: 3.0),
-    BahanBaku(id: 'bb5', name: 'Jeruk Murni', stockAmount: 12.0, unit: 'kg', minimumStock: 4.0),
-    BahanBaku(id: 'bb6', name: 'Kopi Espresso Blend', stockAmount: 5.5, unit: 'kg', minimumStock: 2.0),
-    BahanBaku(id: 'bb7', name: 'Gula Aren Cair', stockAmount: 10.0, unit: 'kg', minimumStock: 3.0),
-    BahanBaku(id: 'bb8', name: 'Minyak Goreng', stockAmount: 20.0, unit: 'liter', minimumStock: 5.0),
-    BahanBaku(id: 'bb9', name: 'Susu Premium Full Cream', stockAmount: 15.0, unit: 'liter', minimumStock: 4.0),
+    BahanBaku(
+      id: 'bb1',
+      name: 'Daging Sapi Segar',
+      stockAmount: 15.5,
+      unit: 'kg',
+      minimumStock: 5.0,
+    ),
+    BahanBaku(
+      id: 'bb2',
+      name: 'Daging Ayam Kampung',
+      stockAmount: 24.0,
+      unit: 'pcs',
+      minimumStock: 10.0,
+    ),
+    BahanBaku(
+      id: 'bb3',
+      name: 'Beras Premium',
+      stockAmount: 50.0,
+      unit: 'kg',
+      minimumStock: 15.0,
+    ),
+    BahanBaku(
+      id: 'bb4',
+      name: 'Udang Pancet',
+      stockAmount: 8.0,
+      unit: 'kg',
+      minimumStock: 3.0,
+    ),
+    BahanBaku(
+      id: 'bb5',
+      name: 'Jeruk Murni',
+      stockAmount: 12.0,
+      unit: 'kg',
+      minimumStock: 4.0,
+    ),
+    BahanBaku(
+      id: 'bb6',
+      name: 'Kopi Espresso Blend',
+      stockAmount: 5.5,
+      unit: 'kg',
+      minimumStock: 2.0,
+    ),
+    BahanBaku(
+      id: 'bb7',
+      name: 'Gula Aren Cair',
+      stockAmount: 10.0,
+      unit: 'kg',
+      minimumStock: 3.0,
+    ),
+    BahanBaku(
+      id: 'bb8',
+      name: 'Minyak Goreng',
+      stockAmount: 20.0,
+      unit: 'liter',
+      minimumStock: 5.0,
+    ),
+    BahanBaku(
+      id: 'bb9',
+      name: 'Susu Premium Full Cream',
+      stockAmount: 15.0,
+      unit: 'liter',
+      minimumStock: 4.0,
+    ),
   ];
 
   List<BahanBaku> get bahanBakuList => List.unmodifiable(_bahanBakuList);

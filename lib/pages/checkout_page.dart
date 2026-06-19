@@ -199,11 +199,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         );
       }
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
