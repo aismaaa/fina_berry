@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../state/app_state.dart';
 import '../models/menu_item.dart';
 import '../widgets/footer_widget.dart';
+import '../widgets/menu_image_widget.dart';
 
 class MenuPage extends StatefulWidget {
   final AppState appState;
@@ -33,9 +34,12 @@ class _MenuPageState extends State<MenuPage> {
       return item.category == _selectedCategory;
     }).toList();
 
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Column(
+    return RefreshIndicator(
+      onRefresh: () => widget.appState.fetchMenus(),
+      color: const Color(0xFF10B981),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
         Padding(
@@ -141,6 +145,7 @@ class _MenuPageState extends State<MenuPage> {
         ),
       ],
       ),
+      ),
     );
   }
 
@@ -226,28 +231,10 @@ class _MenuPageState extends State<MenuPage> {
           // Item Image & Popular Badge
           Stack(
             children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
-                ),
-                child: Image.network(
-                  item.imageUrl,
-                  height: 180,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 180,
-                      color: Colors.grey[300],
-                      alignment: Alignment.center,
-                      child: const Icon(
-                        Icons.restaurant,
-                        size: 40,
-                        color: Colors.grey,
-                      ),
-                    );
-                  },
-                ),
+              MenuImageWidget(
+                imageUrl: item.imageUrl,
+                height: 180,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
               ),
               if (item.isPopular)
                 Positioned(

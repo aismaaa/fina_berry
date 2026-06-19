@@ -5,36 +5,28 @@ import '../models/order_model.dart';
 import '../models/bahan_baku_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../src/platform_stub.dart'
-  if (dart.library.io) '../src/platform_io.dart';
+import 'dart:typed_data';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppState extends ChangeNotifier {
-  // Use localhost for web, IP for native
-  final String _baseUrl = 'http://localhost:8080/api';
+  final String _baseUrl = 'http://192.168.101.32:8080/api';
+  String get baseUrl => _baseUrl;
 
   AppState() {
     // Try to load initial data from Laravel backend on startup
     fetchInitialData();
   }
 
-  Uri _apiUri(String path, {bool backup = false}) {
-    final baseUrl = backup ? _backupBaseUrl : _baseUrl;
-    return Uri.parse('$baseUrl$path');
-  }
-
-  /// Public helper to construct API URIs from widgets/pages.
-  Uri apiUrl(String path, {bool backup = false}) => _apiUri(path, backup: backup);
-
-  Future<http.Response> _tryRequest(
-    String path,
-    Future<http.Response> Function(Uri uri) request,
-  ) async {
-    try {
-      return await request(_apiUri(path));
-    } catch (e) {
-      debugPrint('Request to $_baseUrl$path failed, trying backup url: $e');
-      return await request(_apiUri(path, backup: true));
+   String _formatImageUrl(dynamic url) {
+    if (url == null) return '';
+    String strUrl = url.toString();
+    if (strUrl.startsWith('/')) {
+      return 'http://192.168.101.32:8080$strUrl';
+    } else if (strUrl.startsWith('http://localhost')) {
+      return strUrl.replaceFirst('http://localhost', 'http://192.168.101.32:8080');
     }
+    return strUrl;
   }
 
   Future<void> fetchInitialData() async {
@@ -106,11 +98,103 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Menu items list — kosong, diisi manual oleh admin/kasir
+  // ─── Default menu (fallback jika backend & cache kosong) ───────────────────
+  static final List<MenuItem> _defaultMenuItems = [
+    // Makanan
+    MenuItem(id: 'd1',  name: 'Bakso Daging Sapi',           price: 15000, category: 'Makanan', description: '', imageUrl: ''),
+    MenuItem(id: 'd2',  name: 'Bakso Krewedan',               price: 22000, category: 'Makanan', description: '', imageUrl: ''),
+    MenuItem(id: 'd3',  name: 'Bakso Keju',                   price: 17000, category: 'Makanan', description: '', imageUrl: ''),
+    MenuItem(id: 'd4',  name: 'Soto Ayam',                    price: 10000, category: 'Makanan', description: '', imageUrl: ''),
+    MenuItem(id: 'd5',  name: 'Soto Ayam Komplit',            price: 20000, category: 'Makanan', description: '', imageUrl: ''),
+    MenuItem(id: 'd6',  name: 'Soto Daging Sapi',             price: 23000, category: 'Makanan', description: '', imageUrl: ''),
+    MenuItem(id: 'd7',  name: 'Soto Babat',                   price: 20000, category: 'Makanan', description: '', imageUrl: ''),
+    MenuItem(id: 'd8',  name: 'Nasi Goreng',                  price: 15000, category: 'Makanan', description: '', imageUrl: ''),
+    MenuItem(id: 'd9',  name: 'Sop Daging Sapi + Nasi',       price: 25000, category: 'Makanan', description: '', imageUrl: ''),
+    MenuItem(id: 'd10', name: 'Ca Kangkung',                  price: 8000,  category: 'Makanan', description: '', imageUrl: ''),
+    MenuItem(id: 'd11', name: 'Paket Ayam Goreng',            price: 15000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
+    MenuItem(id: 'd12', name: 'Paket Ayam Bakar',             price: 15000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
+    MenuItem(id: 'd13', name: 'Paket Ayam Goreng Penyet',     price: 16000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
+    MenuItem(id: 'd14', name: 'Paket Ayam Bakar Penyet',      price: 16000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
+    MenuItem(id: 'd15', name: 'Paket Ayam Goreng Kampung',    price: 25000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
+    MenuItem(id: 'd16', name: 'Paket Ayam Bakar Kampung',     price: 27000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
+    MenuItem(id: 'd17', name: 'Paket Ikan Mujair Goreng',     price: 20000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
+    MenuItem(id: 'd18', name: 'Paket Ikan Mujair Bakar',      price: 20000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
+    // Minuman
+    MenuItem(id: 'd19', name: 'Teh Tawar',                    price: 2000,  category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd20', name: 'Es Teh Tawar',                 price: 3000,  category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd21', name: 'Teh Manis Anget',              price: 3000,  category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd22', name: 'Es Teh Manis',                 price: 4000,  category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd23', name: 'Lemon Tea Anget',              price: 9000,  category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd24', name: 'Es Lemon Tea',                 price: 10000, category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd25', name: 'Jeruk Anget',                  price: 4000,  category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd26', name: 'Es Jeruk',                     price: 5000,  category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd27', name: 'Aneka Kopi',                   price: 3000,  category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd28', name: 'Kopi Cappucino',               price: 5000,  category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd29', name: 'Es Kopi Cappucino',            price: 5000,  category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd30', name: 'Jahe Susu',                    price: 3000,  category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd31', name: 'Soda Susu',                    price: 10000, category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd32', name: 'Wedang Jahe',                  price: 7000,  category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd33', name: 'Jus Strawberry',               price: 12000, category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd34', name: 'Jus Melon',                    price: 10000, category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd35', name: 'Jus Jambu',                    price: 10000, category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd36', name: 'Jus Mangga',                   price: 12000, category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd37', name: 'Jus Jeruk',                    price: 10000, category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd38', name: 'Jus Buah Naga',                price: 10000, category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd39', name: 'Jus Alpukat',                  price: 12000, category: 'Minuman', description: '', imageUrl: ''),
+    // Cemilan
+    MenuItem(id: 'd40', name: 'Mendoan',                      price: 10000, category: 'Cemilan', description: '1 Porsi', imageUrl: ''),
+    MenuItem(id: 'd41', name: 'Tahu Brontak',                 price: 10000, category: 'Cemilan', description: '1 Porsi', imageUrl: ''),
+    MenuItem(id: 'd42', name: 'Pisang Goreng',                price: 10000, category: 'Cemilan', description: '1 Porsi', imageUrl: ''),
+  ];
+
+  // Menu items list
   List<MenuItem> _menuItems = [];
 
   List<MenuItem> get menuItems => List.unmodifiable(_menuItems);
 
+  // ─── Simpan menu ke SharedPreferences ────────────────────────────────────────
+  Future<void> _saveMenusToCache(List<MenuItem> items) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final encoded = json.encode(items.map((m) => {
+        'id': m.id,
+        'name': m.name,
+        'description': m.description,
+        'price': m.price,
+        'imageUrl': m.imageUrl,
+        'category': m.category,
+        'isPopular': m.isPopular,
+      }).toList());
+      await prefs.setString('cached_menus', encoded);
+    } catch (e) {
+      debugPrint('Cache save error: $e');
+    }
+  }
+
+  // ─── Load menu dari SharedPreferences ────────────────────────────────────────
+  Future<List<MenuItem>> _loadMenusFromCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cached = prefs.getString('cached_menus');
+      if (cached != null && cached.isNotEmpty) {
+        final List<dynamic> data = json.decode(cached);
+        return data.map((jsonItem) => MenuItem(
+          id: jsonItem['id'],
+          name: jsonItem['name'],
+          description: jsonItem['description'] ?? '',
+          price: double.parse(jsonItem['price'].toString()),
+          imageUrl: jsonItem['imageUrl'] ?? '',
+          category: jsonItem['category'],
+          isPopular: jsonItem['isPopular'] ?? true,
+        )).toList();
+      }
+    } catch (e) {
+      debugPrint('Cache load error: $e');
+    }
+    return [];
+  }
+
+  // ─── Fetch menu: Backend → Cache (merge) → Default ──────────────────────────
   Future<void> fetchMenus() async {
     try {
       final response = await http
@@ -118,32 +202,83 @@ class AppState extends ChangeNotifier {
           .timeout(const Duration(seconds: 4));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-        _menuItems = data.map((jsonItem) {
+
+        // Load cache dulu untuk preserve foto base64 yang sudah diupload lokal
+        final cachedItems = await _loadMenusFromCache();
+        final cachedMap = <String, MenuItem>{
+          for (var item in cachedItems) item.id: item
+        };
+
+        final fetched = data.map((jsonItem) {
+          final id = jsonItem['id'].toString();
+          final backendImageUrl = _formatImageUrl(jsonItem['imageUrl']);
+
+          // Prioritaskan base64 lokal jika ada (selalu bisa tampil tanpa internet)
+          String imageUrl = backendImageUrl;
+          if (cachedMap.containsKey(id) &&
+              cachedMap[id]!.imageUrl.startsWith('data:image')) {
+            imageUrl = cachedMap[id]!.imageUrl;
+          }
+
           return MenuItem(
-            id: jsonItem['id'].toString(),
+            id: id,
             name: jsonItem['name'],
             description: jsonItem['description'] ?? '',
             price: double.parse(jsonItem['price'].toString()),
-            imageUrl: jsonItem['imageUrl'] ?? '',
+            imageUrl: imageUrl,
             category: jsonItem['category'],
-            isPopular:
-                jsonItem['isAvailable'] ?? true, // maps availability status
+            isPopular: jsonItem['isAvailable'] ?? true,
           );
         }).toList();
+
+        _menuItems = fetched;
+        await _saveMenusToCache(fetched); // simpan (sudah termasuk foto lokal)
         notifyListeners();
+        return;
       }
     } catch (e) {
       debugPrint(
         'Sync warning: Cannot fetch menus from backend, using local data. Error: $e',
       );
     }
+
+    // Layer 2: load dari cache lokal
+    final cached = await _loadMenusFromCache();
+    if (cached.isNotEmpty) {
+      debugPrint('Menu loaded from local cache (${cached.length} items)');
+      _menuItems = cached;
+      notifyListeners();
+      return;
+    }
+
+    // Layer 3: gunakan data default hardcoded
+    debugPrint('Menu loaded from built-in defaults (${_defaultMenuItems.length} items)');
+    _menuItems = List.from(_defaultMenuItems);
+    notifyListeners();
   }
 
-  Future<void> addMenuItem(
-    MenuItem item, {
-    List<int>? imageBytes,
-    String? imageFilename,
-  }) async {
+  Future<void> addMenuItem(MenuItem item, {List<int>? imageBytes, String? imageFilename}) async {
+    // LANGKAH 1: Simpan base64 lokal dulu agar foto langsung tampil
+    String localImageUrl = item.imageUrl;
+    if (imageBytes != null) {
+      final base64Str = base64Encode(Uint8List.fromList(imageBytes));
+      final ext = (imageFilename ?? 'upload.jpg').toLowerCase().endsWith('.png') ? 'png' : 'jpeg';
+      localImageUrl = 'data:image/$ext;base64,$base64Str';
+    }
+    final localItem = MenuItem(
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      category: item.category,
+      price: item.price,
+      imageUrl: localImageUrl,
+      isPopular: item.isPopular,
+    );
+    _menuItems.add(localItem);
+    await _saveMenusToCache(_menuItems);
+    notifyListeners(); // tampilkan foto segera
+
+    // LANGKAH 2: Coba sinkronisasi ke backend (opsional, tidak blokir UI)
     try {
       if (imageBytes != null) {
         var request = http.MultipartRequest(
@@ -154,47 +289,98 @@ class AppState extends ChangeNotifier {
         request.fields['description'] = item.description;
         request.fields['price'] = item.price.toString();
         request.fields['category'] = item.category;
-
-        request.files.add(
-          http.MultipartFile.fromBytes(
-            'image',
-            imageBytes,
-            filename: imageFilename ?? 'upload.jpg',
-          ),
-        );
-
-        final streamedResponse = await request.send().timeout(
-          const Duration(seconds: 4),
-        );
+        request.files.add(http.MultipartFile.fromBytes(
+          'image',
+          imageBytes,
+          filename: imageFilename ?? 'upload.jpg',
+        ));
+        final streamedResponse = await request.send().timeout(const Duration(seconds: 8));
         final response = await http.Response.fromStream(streamedResponse);
         if (response.statusCode == 200 || response.statusCode == 201) {
-          await fetchMenus();
+          await fetchMenus(); // sinkron ulang dengan data backend
         }
       } else {
-        final response = await http
-            .post(
-              Uri.parse('$_baseUrl/menus'),
-              headers: {'Content-Type': 'application/json'},
-              body: json.encode({
-                'name': item.name,
-                'description': item.description,
-                'price': item.price,
-                'category': item.category,
-                'imageUrl': item.imageUrl,
-              }),
-            )
-            .timeout(const Duration(seconds: 4));
-
+        final response = await http.post(
+          Uri.parse('$_baseUrl/menus'),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'name': item.name,
+            'description': item.description,
+            'price': item.price,
+            'category': item.category,
+            'imageUrl': item.imageUrl,
+          }),
+        ).timeout(const Duration(seconds: 4));
         if (response.statusCode == 200 || response.statusCode == 201) {
           await fetchMenus();
         }
       }
     } catch (e) {
-      debugPrint(
-        'Sync warning: Cannot add menu item to backend, running locally. Error: $e',
-      );
-      _menuItems.add(item);
-      notifyListeners();
+      debugPrint('Backend sync skipped (offline): $e');
+    }
+  }
+
+  Future<void> updateMenuItem(MenuItem item, {List<int>? imageBytes, String? imageFilename}) async {
+    // LANGKAH 1: Simpan base64 lokal dulu agar foto langsung tampil
+    String localImageUrl = item.imageUrl;
+    if (imageBytes != null) {
+      final base64Str = base64Encode(Uint8List.fromList(imageBytes));
+      final ext = (imageFilename ?? 'upload.jpg').toLowerCase().endsWith('.png') ? 'png' : 'jpeg';
+      localImageUrl = 'data:image/$ext;base64,$base64Str';
+    }
+    final updatedItem = MenuItem(
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      category: item.category,
+      price: item.price,
+      imageUrl: localImageUrl,
+      isPopular: item.isPopular,
+    );
+    final index = _menuItems.indexWhere((m) => m.id == item.id);
+    if (index >= 0) {
+      _menuItems[index] = updatedItem;
+    }
+    await _saveMenusToCache(_menuItems);
+    notifyListeners(); // tampilkan foto segera
+
+    // LANGKAH 2: Coba sinkronisasi ke backend (opsional, tidak blokir UI)
+    try {
+      if (imageBytes != null) {
+        var request = http.MultipartRequest('POST', Uri.parse('$_baseUrl/menus/${item.id}'));
+        request.fields['_method'] = 'PATCH';
+        request.fields['name'] = item.name;
+        request.fields['description'] = item.description;
+        request.fields['price'] = item.price.toString();
+        request.fields['category'] = item.category;
+        request.files.add(http.MultipartFile.fromBytes(
+          'image',
+          imageBytes,
+          filename: imageFilename ?? 'upload.jpg',
+        ));
+        final streamedResponse = await request.send().timeout(const Duration(seconds: 8));
+        final response = await http.Response.fromStream(streamedResponse);
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          await fetchMenus();
+        }
+      } else {
+        final response = await http.patch(
+          Uri.parse('$_baseUrl/menus/${item.id}'),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'name': item.name,
+            'description': item.description,
+            'price': item.price,
+            'category': item.category,
+            'imageUrl': item.imageUrl,
+          }),
+        ).timeout(const Duration(seconds: 4));
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          await fetchMenus();
+        }
+      }
+    } catch (e) {
+      debugPrint('Backend sync skipped (offline): $e');
     }
   }
 
@@ -309,7 +495,7 @@ class AppState extends ChangeNotifier {
                 name: menuJson['name'] ?? 'Unknown',
                 description: menuJson['description'] ?? '',
                 price: double.parse(menuJson['price'].toString()),
-                imageUrl: menuJson['imageUrl'] ?? '',
+                imageUrl: _formatImageUrl(menuJson['imageUrl']),
                 category: menuJson['category'] ?? 'Makanan',
               ),
               quantity: itemJson['quantity'] ?? 1,
@@ -382,6 +568,13 @@ class AppState extends ChangeNotifier {
           .timeout(const Duration(seconds: 4));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = json.decode(response.body);
+        if (responseData['redirect_url'] != null) {
+          final uri = Uri.parse(responseData['redirect_url']);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        }
         await fetchOrders();
       } else {
         throw Exception('Status code: ${response.statusCode}');

@@ -74,8 +74,36 @@ class OrderController extends Controller
             });
 
             $order->load('items.menu');
+            $response = $this->formatOrder($order);
 
-            return response()->json($this->formatOrder($order), 201);
+            // Generate Midtrans Snap Token
+            \Midtrans\Config::$serverKey = config('midtrans.server_key') ?: env('MIDTRANS_SERVER_KEY');
+            \Midtrans\Config::$isProduction = config('midtrans.is_production');
+            \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
+            \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
+
+            $params = array(
+                'transaction_details' => array(
+                    'order_id' => 'ORDER-' . $order->id . '-' . time(),
+                    'gross_amount' => $order->total,
+                ),
+                'customer_details' => array(
+                    'first_name' => $order->customer_name,
+                )
+            );
+
+            try {
+                if (\Midtrans\Config::$serverKey) {
+                    $snapResponse = \Midtrans\Snap::createTransaction($params);
+                    $response['snap_token'] = $snapResponse->token;
+                    $response['redirect_url'] = $snapResponse->redirect_url;
+                }
+            } catch (\Exception $e) {
+                // Ignore if midtrans fails, or log it
+                $response['midtrans_error'] = $e->getMessage();
+            }
+
+            return response()->json($response, 201);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Failed to create order',

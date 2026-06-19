@@ -8,6 +8,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../models/menu_item.dart';
 import '../widgets/footer_widget.dart';
+import '../widgets/menu_image_widget.dart';
 
 class AdminPage extends StatefulWidget {
   final AppState appState;
@@ -34,6 +35,20 @@ class _AdminPageState extends State<AdminPage> {
 
   // Stock controller maps to track user edits
   final Map<String, TextEditingController> _stockControllers = {};
+  bool _isRefreshingOrders = false;
+
+  Future<void> _refreshOrders() async {
+    setState(() => _isRefreshingOrders = true);
+    await widget.appState.fetchOrders();
+    if (mounted) setState(() => _isRefreshingOrders = false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Auto-refresh orders when admin page opens
+    widget.appState.fetchOrders();
+  }
 
   @override
   void dispose() {
@@ -116,9 +131,10 @@ class _AdminPageState extends State<AdminPage> {
       ),
     );
 
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf.save(),
-      name: 'Struk_${order.id}.pdf',
+    final bytes = await pdf.save();
+    await Printing.sharePdf(
+      bytes: bytes,
+      filename: 'Struk_${order.id}.pdf',
     );
   }
 
@@ -442,12 +458,15 @@ class _AdminPageState extends State<AdminPage> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                role == 'admin' ? 'Fina Berry - Admin' : 'Fina Berry - Kasir',
-                style: TextStyle(
-                  color: isDark ? Colors.white : Colors.grey[900],
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+              Expanded(
+                child: Text(
+                  role == 'admin' ? 'Fina Berry - Admin' : 'Fina Berry - Kasir',
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.grey[900],
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               IconButton(
@@ -474,10 +493,8 @@ class _AdminPageState extends State<AdminPage> {
             ),
             tabs: [
               Tab(
-                icon: Icon(
-                  role == 'admin' ? Icons.bar_chart : Icons.receipt_long,
-                ),
-                text: role == 'admin' ? 'Analisis' : 'Antrean',
+                icon: Icon(role == 'admin' ? Icons.bar_chart : Icons.receipt_long),
+                text: role == 'admin' ? 'Analisis & Antrean' : 'Antrean Pesanan',
               ),
               Tab(
                 icon: const Icon(Icons.restaurant_menu),
@@ -525,7 +542,7 @@ class _AdminPageState extends State<AdminPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // If Admin, show full financial stats
+            // Financial stats for reporting
             if (role == 'admin') ...[
               _buildStatsCard(
                 title: 'Total Pendapatan',
@@ -569,31 +586,71 @@ class _AdminPageState extends State<AdminPage> {
               const SizedBox(height: 32),
             ],
 
-            Text(
-              'Daftar Antrean Pesanan',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.grey[900],
-              ),
+            // Header + Refresh button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Daftar Antrean Pesanan',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.grey[900],
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: _isRefreshingOrders ? null : _refreshOrders,
+                  icon: _isRefreshingOrders
+                      ? const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Color(0xFF10B981),
+                          ),
+                        )
+                      : const Icon(Icons.refresh, size: 18, color: Color(0xFF10B981)),
+                  label: const Text(
+                    'Refresh',
+                    style: TextStyle(color: Color(0xFF10B981), fontSize: 13),
+                  ),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
 
             ordersList.isEmpty
                 ? Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
                       color: isDark ? const Color(0xFF161F30) : Colors.white,
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Center(
-                      child: Text(
-                        'Belum ada pesanan masuk.',
-                        style: TextStyle(
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.inbox_outlined,
+                          size: 48,
+                          color: isDark ? Colors.grey[700] : Colors.grey[400],
                         ),
-                      ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Belum ada pesanan masuk.',
+                          style: TextStyle(
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        TextButton.icon(
+                          onPressed: _refreshOrders,
+                          icon: const Icon(Icons.refresh, color: Color(0xFF10B981), size: 16),
+                          label: const Text('Tap untuk refresh', style: TextStyle(color: Color(0xFF10B981))),
+                        ),
+                      ],
                     ),
                   )
                 : ListView.builder(
@@ -639,37 +696,43 @@ class _AdminPageState extends State<AdminPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: isDark ? Colors.grey[400] : Colors.grey[600],
-                  fontWeight: FontWeight.w500,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : Colors.grey[900],
+                const SizedBox(height: 8),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? Colors.white : Colors.grey[900],
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                subtext,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
+                const SizedBox(height: 8),
+                Text(
+                  subtext,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
+          const SizedBox(width: 12),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -730,14 +793,18 @@ class _AdminPageState extends State<AdminPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                order.id,
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : Colors.grey[900],
-                  fontSize: 14,
+              Expanded(
+                child: Text(
+                  order.id,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? Colors.white : Colors.grey[900],
+                    fontSize: 14,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 12),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
@@ -768,6 +835,8 @@ class _AdminPageState extends State<AdminPage> {
               fontSize: 13,
               color: isDark ? Colors.grey[300] : Colors.grey[700],
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
           ),
           const SizedBox(height: 8),
           // Customer details row
@@ -779,12 +848,15 @@ class _AdminPageState extends State<AdminPage> {
                 color: isDark ? Colors.grey[400] : Colors.grey[600],
               ),
               const SizedBox(width: 4),
-              Text(
-                '${order.customerName} (Meja ${order.tableNumber})',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: isDark ? Colors.grey[400] : Colors.grey[600],
-                  fontWeight: FontWeight.w500,
+              Expanded(
+                child: Text(
+                  '${order.customerName} (Meja ${order.tableNumber})',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(width: 8),
@@ -805,104 +877,76 @@ class _AdminPageState extends State<AdminPage> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          const SizedBox(height: 8),
+          Text(
+            formattedPrice,
+            style: const TextStyle(
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF10B981),
+              fontSize: 15,
+            ),
+          ),
+          const SizedBox(height: 8),
+          // Action buttons — pakai Wrap agar tidak overflow di layar kecil
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
             children: [
-              Text(
-                formattedPrice,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF10B981),
-                  fontSize: 15,
+              if (order.status == OrderStatus.pending) ...[
+                TextButton(
+                  onPressed: () => widget.appState.updateOrderStatus(
+                    order.id, OrderStatus.cancelled),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.redAccent,
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text('Tolak', style: TextStyle(fontSize: 12)),
                 ),
-              ),
+                ElevatedButton(
+                  onPressed: () => widget.appState.updateOrderStatus(
+                    order.id, OrderStatus.processing),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  child: const Text('Terima Pesanan', style: TextStyle(fontSize: 12)),
+                ),
+              ],
+              if (order.status == OrderStatus.processing)
+                ElevatedButton(
+                  onPressed: () => widget.appState.updateOrderStatus(
+                    order.id, OrderStatus.completed),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF10B981),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  child: const Text('Terima Pembayaran', style: TextStyle(fontSize: 12)),
+                ),
+              if (order.status == OrderStatus.completed || order.status == OrderStatus.processing)
+                ElevatedButton.icon(
+                  onPressed: () => _printReceipt(order),
+                  icon: const Icon(Icons.print, size: 14),
+                  label: const Text('Cetak Struk', style: TextStyle(fontSize: 12)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF3B82F6),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                ),
 
-              // Action buttons based on status
-              Row(
-                children: [
-                  if (order.status == OrderStatus.pending) ...[
-                    TextButton(
-                      onPressed: () {
-                        widget.appState.updateOrderStatus(
-                          order.id,
-                          OrderStatus.cancelled,
-                        );
-                      },
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.redAccent,
-                      ),
-                      child: const Text('Tolak'),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Menerima Pemesanan -> moves to processing
-                        widget.appState.updateOrderStatus(
-                          order.id,
-                          OrderStatus.processing,
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Text('Terima Pemesanan'),
-                    ),
-                  ],
-                  if (order.status == OrderStatus.processing) ...[
-                    ElevatedButton(
-                      onPressed: () {
-                        // Menerima Pembayaran -> moves to completed
-                        widget.appState.updateOrderStatus(
-                          order.id,
-                          OrderStatus.completed,
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF10B981),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Text('Terima Pembayaran'),
-                    ),
-                  ],
-                  if (order.status == OrderStatus.completed || order.status == OrderStatus.processing) ...[
-                    const SizedBox(width: 8),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        _printReceipt(order);
-                      },
-                      icon: const Icon(Icons.print, size: 16),
-                      label: const Text('Cetak Struk'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF3B82F6),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
             ],
           ),
         ],
@@ -926,7 +970,7 @@ class _AdminPageState extends State<AdminPage> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               content: SizedBox(
                 width: 400,
-                child: SingleChildScrollView(child: _AddMenuFormWidget(appState: widget.appState, isDark: isDark)),
+                child: SingleChildScrollView(child: _MenuFormWidget(appState: widget.appState, isDark: isDark)),
               ),
             ),
           );
@@ -956,17 +1000,12 @@ class _AdminPageState extends State<AdminPage> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    item.imageUrl,
+                  child: MenuImageWidget(
+                    imageUrl: item.imageUrl,
                     width: 60,
                     height: 60,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: 60,
-                      height: 60,
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.fastfood, color: Colors.grey),
-                    ),
+                    iconSize: 24,
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -992,6 +1031,25 @@ class _AdminPageState extends State<AdminPage> {
                       ),
                     ],
                   ),
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.edit_outlined,
+                    color: Colors.blueAccent,
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        backgroundColor: isDark ? const Color(0xFF161F30) : Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        content: SizedBox(
+                          width: 400,
+                          child: SingleChildScrollView(child: _MenuFormWidget(appState: widget.appState, isDark: isDark, menuToEdit: item)),
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 IconButton(
                   icon: const Icon(
@@ -1169,17 +1227,18 @@ class _AdminPageState extends State<AdminPage> {
   }
 }
 
-class _AddMenuFormWidget extends StatefulWidget {
+class _MenuFormWidget extends StatefulWidget {
   final AppState appState;
   final bool isDark;
+  final MenuItem? menuToEdit;
 
-  const _AddMenuFormWidget({required this.appState, required this.isDark});
+  const _MenuFormWidget({required this.appState, required this.isDark, this.menuToEdit});
 
   @override
-  State<_AddMenuFormWidget> createState() => _AddMenuFormWidgetState();
+  State<_MenuFormWidget> createState() => _MenuFormWidgetState();
 }
 
-class _AddMenuFormWidgetState extends State<_AddMenuFormWidget> {
+class _MenuFormWidgetState extends State<_MenuFormWidget> {
   final _nameCtrl = TextEditingController();
   final _descCtrl = TextEditingController();
   final _priceCtrl = TextEditingController();
@@ -1188,6 +1247,17 @@ class _AddMenuFormWidgetState extends State<_AddMenuFormWidget> {
   
   XFile? _selectedImage;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.menuToEdit != null) {
+      _nameCtrl.text = widget.menuToEdit!.name;
+      _descCtrl.text = widget.menuToEdit!.description;
+      _priceCtrl.text = widget.menuToEdit!.price.toInt().toString();
+      _category = widget.menuToEdit!.category;
+    }
+  }
 
   Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -1220,7 +1290,7 @@ class _AddMenuFormWidgetState extends State<_AddMenuFormWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Tambah Menu Baru',
+              widget.menuToEdit == null ? 'Tambah Menu Baru' : 'Edit Menu',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -1401,49 +1471,43 @@ class _AddMenuFormWidgetState extends State<_AddMenuFormWidget> {
                     }
 
                     final newItem = MenuItem(
-                      id: 'menu-${DateTime.now().millisecondsSinceEpoch}',
+                      id: widget.menuToEdit?.id ?? 'menu-${DateTime.now().millisecondsSinceEpoch}',
                       name: _nameCtrl.text,
                       description: _descCtrl.text,
                       category: _category,
                       price: double.parse(_priceCtrl.text),
-                      imageUrl: '', // Backend akan mengembalikan URL gambar sebenarnya
+                      imageUrl: widget.menuToEdit?.imageUrl ?? '',
                     );
 
-                    await widget.appState.addMenuItem(
-                      newItem,
-                      imageBytes: imageBytes,
-                      imageFilename: imageFilename,
-                    );
+                    if (widget.menuToEdit == null) {
+                      await widget.appState.addMenuItem(
+                        newItem,
+                        imageBytes: imageBytes,
+                        imageFilename: imageFilename,
+                      );
+                    } else {
+                      await widget.appState.updateMenuItem(
+                        newItem,
+                        imageBytes: imageBytes,
+                        imageFilename: imageFilename,
+                      );
+                    }
 
                     if (mounted) {
-                      showDialog(
-                        context: context,
-                        builder: (c) => AlertDialog(
-                          backgroundColor: widget.isDark
-                              ? const Color(0xFF161F30)
-                              : Colors.white,
-                          title: const Text('Berhasil!'),
-                          content: const Text('Menu baru berhasil ditambahkan.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(c);
-                              },
-                              child: const Text(
-                                'Tutup',
-                                style: TextStyle(color: Color(0xFF10B981)),
-                              ),
-                            ),
-                          ],
+                      // Tutup form dialog dulu agar user bisa lihat foto yang baru diupload
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            widget.menuToEdit == null
+                                ? '✅ Menu baru berhasil ditambahkan!'
+                                : '✅ Menu berhasil diperbarui!',
+                          ),
+                          backgroundColor: const Color(0xFF10B981),
+                          behavior: SnackBarBehavior.floating,
+                          duration: const Duration(seconds: 2),
                         ),
                       );
-
-                      _nameCtrl.clear();
-                      _descCtrl.clear();
-                      _priceCtrl.clear();
-                      setState(() {
-                        _selectedImage = null;
-                      });
                     }
                   }
                 },
