@@ -56,44 +56,39 @@ class _CheckoutPageState extends State<CheckoutPage> {
     });
 
     try {
-      // Menggunakan public Sandbox Key untuk testing sementara
-      const serverKey = 'SB-Mid-server-ToO7zCEY0tUv2VIfB2a1K-Iu';
-      final String basicAuth =
-          'Basic ${base64Encode(utf8.encode('$serverKey:'))}';
+      // Call backend to create Midtrans transaction (backend uses server key)
+      final backendUrl = widget.appState.apiUrl('/payment/snap-token');
 
-      // Menggunakan proxy CORS karena web browser (Chrome) memblokir request langsung (CORS)
+      final itemsList = widget.appState.cartItems.map((cartItem) {
+        return {
+          'menu_id': int.tryParse(cartItem.item.id) ?? cartItem.item.id,
+          'quantity': cartItem.quantity,
+          'price': cartItem.item.price,
+        };
+      }).toList();
+
+      final body = jsonEncode({
+        'customerName': name,
+        'tableNumber': table,
+        'paymentMethod': _selectedPaymentMethod,
+        'total': amount,
+        'items': itemsList,
+      });
+
       final response = await http.post(
-        Uri.parse(
-          'https://corsproxy.io/?https://app.sandbox.midtrans.com/snap/v1/transactions',
-        ),
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': basicAuth,
-        },
-        body: jsonEncode({
-          "transaction_details": {
-            "order_id": "ORDER-${DateTime.now().millisecondsSinceEpoch}",
-            "gross_amount": amount,
-          },
-          "customer_details": {
-            "first_name": name,
-            "email": "customer@example.com",
-          },
-        }),
-      );
+        backendUrl,
+        headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+        body: body,
+      ).timeout(const Duration(seconds: 10));
 
       final data = jsonDecode(response.body);
 
-      if (response.statusCode == 201 && data['redirect_url'] != null) {
-        // Kosongkan keranjang
-        widget.appState.checkout(
-          customerName: name,
-          tableNumber: table,
-          paymentMethod: _selectedPaymentMethod,
-        );
+      if ((response.statusCode == 200 || response.statusCode == 201) && data['redirect_url'] != null) {
+        // backend already created the order and returned the Midtrans redirect URL
+        // clear local cart and refresh orders
+        widget.appState.clearCart();
+        await widget.appState.fetchOrders();
 
-        // Buka URL Pembayaran di Browser
         final redirectUrl = Uri.parse(data['redirect_url']);
         if (!await launchUrl(
           redirectUrl,
@@ -102,19 +97,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
           throw Exception('Tidak dapat membuka halaman pembayaran');
         }
 
-        // Asumsikan sukses setelah membuka browser
-        if (mounted) {
-          widget.onOrderSuccess();
-        }
+        if (mounted) widget.onOrderSuccess();
       } else {
+        final msg = data['details'] ?? data['error'] ?? data['message'] ?? data['error_messages'] ?? 'Unknown error';
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Gagal: ${data['error_messages'] ?? "Cek Server Key Midtrans Anda"}',
-              ),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text('Gagal: $msg'), backgroundColor: Colors.red),
           );
         }
       }
@@ -125,11 +113,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         );
       }
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 

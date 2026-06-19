@@ -15,6 +15,8 @@ class Order extends Model
         'payment_method',
         'total',
         'status',
+        'payment_status',
+        'midtrans_order_id',
     ];
 
     protected $casts = [
