@@ -5,6 +5,8 @@ import '../models/order_model.dart';
 import '../models/bahan_baku_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../src/platform_stub.dart'
+  if (dart.library.io) '../src/platform_io.dart';
 
 class AppState extends ChangeNotifier {
   // Use localhost for web, IP for native
@@ -13,6 +15,26 @@ class AppState extends ChangeNotifier {
   AppState() {
     // Try to load initial data from Laravel backend on startup
     fetchInitialData();
+  }
+
+  Uri _apiUri(String path, {bool backup = false}) {
+    final baseUrl = backup ? _backupBaseUrl : _baseUrl;
+    return Uri.parse('$baseUrl$path');
+  }
+
+  /// Public helper to construct API URIs from widgets/pages.
+  Uri apiUrl(String path, {bool backup = false}) => _apiUri(path, backup: backup);
+
+  Future<http.Response> _tryRequest(
+    String path,
+    Future<http.Response> Function(Uri uri) request,
+  ) async {
+    try {
+      return await request(_apiUri(path));
+    } catch (e) {
+      debugPrint('Request to $_baseUrl$path failed, trying backup url: $e');
+      return await request(_apiUri(path, backup: true));
+    }
   }
 
   Future<void> fetchInitialData() async {
@@ -43,8 +65,11 @@ class AppState extends ChangeNotifier {
   // Auth State
   String? _currentUserRole; // null, 'admin', 'kasir'
   String? get currentUserRole => _currentUserRole;
+  String? _lastLoginError;
+  String? get lastLoginError => _lastLoginError;
 
   Future<bool> login(String username, String password) async {
+    _lastLoginError = null;
     try {
       final response = await http
           .post(
@@ -62,9 +87,16 @@ class AppState extends ChangeNotifier {
         _currentUserRole = data['user']['role'];
         notifyListeners();
         return true;
+      } else {
+        final body = response.body;
+        _lastLoginError = 'Server: ${response.statusCode} - $body';
+        debugPrint('Login failed: ${response.statusCode} ${response.body}');
+        notifyListeners();
       }
     } catch (e) {
+      _lastLoginError = 'Error: $e';
       debugPrint('Login Error: $e');
+      notifyListeners();
     }
     return false;
   }
@@ -167,14 +199,28 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> removeMenuItem(String id) async {
+    // If the id looks like a local-only id (created on client), remove locally
+    if (id.startsWith('menu-')) {
+      _menuItems.removeWhere((item) => item.id == id);
+      notifyListeners();
+      return;
+    }
+
     try {
       final response = await http
           .delete(Uri.parse('$_baseUrl/menus/$id'))
           .timeout(const Duration(seconds: 4));
 
-      if (response.statusCode == 200) {
+      // Treat any successful 2xx response as deleted and refresh from server
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        debugPrint('Delete successful for id=$id (status ${response.statusCode})');
         await fetchMenus();
+        return;
       }
+
+      // Non-2xx: log and refresh from server to keep UI in sync (don't remove locally)
+      debugPrint('Delete failed for id=$id, status=${response.statusCode}, body=${response.body}');
+      await fetchMenus();
     } catch (e) {
       debugPrint(
         'Sync warning: Cannot delete menu item from backend, running locally. Error: $e',
@@ -213,7 +259,7 @@ class AppState extends ChangeNotifier {
     _cartItems.removeWhere((cartItem) => cartItem.item.id == itemId);
     notifyListeners();
   }
-
+  
   void incrementQuantity(String itemId) {
     final index = _cartItems.indexWhere(
       (cartItem) => cartItem.item.id == itemId,
@@ -242,9 +288,8 @@ class AppState extends ChangeNotifier {
     _cartItems.clear();
     notifyListeners();
   }
-
-  // Order state
   List<OrderModel> _orders = [];
+
   List<OrderModel> get orders => List.unmodifiable(_orders);
 
   Future<void> fetchOrders() async {
