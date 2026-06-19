@@ -32,6 +32,11 @@ Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index']);
 Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store']);
 Route::patch('/orders/{id}/status', [\App\Http\Controllers\OrderController::class, 'updateStatus']);
 
+// Midtrans payment endpoints
+Route::post('/payment/snap-token', [\App\Http\Controllers\MidtransController::class, 'createSnapToken']);
+Route::post('/payment/notification', [\App\Http\Controllers\MidtransController::class, 'notification']);
+Route::get('/payment/debug', [\App\Http\Controllers\MidtransController::class, 'debug']);
+
 // Report endpoints (laporan endpoints)
 Route::get('/reports/orders', [\App\Http\Controllers\ReportController::class, 'orders']);
 Route::get('/reports/export', [\App\Http\Controllers\ReportController::class, 'export']);
