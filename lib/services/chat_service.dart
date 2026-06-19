@@ -3,11 +3,8 @@ import 'package:http/http.dart' as http;
 
 class ChatService {
   // ✅ Menggunakan n8n webhook sebagai perantara ke AI
-  // 192.168.101.22 = IP address komputer lokal (Wi-Fi) untuk test di HP fisik
-  // Ganti PATH_WEBHOOK dengan path dari node Webhook di n8n kamu
-  // Contoh: jika Production URL = http://localhost:5678/webhook/fina-ai
-  //         maka _webhookPath = 'fina-ai'
-  static const String _n8nBaseUrl = 'http://192.168.0.104:5678/webhook';
+  // Use localhost for web access
+  static const String _n8nBaseUrl = 'http://localhost:5678/webhook';
   static const String _webhookPath = 'chatbot'; // ← Ganti ini!
 
   final List<Map<String, dynamic>> _conversationHistory = [];
