@@ -5,6 +5,8 @@ import '../models/order_model.dart';
 import '../models/bahan_baku_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../src/platform_stub.dart'
+  if (dart.library.io) '../src/platform_io.dart';
 
 class AppState extends ChangeNotifier {
   final String _baseUrl = 'http://192.168.0.104:8080/api';
@@ -12,6 +14,26 @@ class AppState extends ChangeNotifier {
   AppState() {
     // Try to load initial data from Laravel backend on startup
     fetchInitialData();
+  }
+
+  Uri _apiUri(String path, {bool backup = false}) {
+    final baseUrl = backup ? _backupBaseUrl : _baseUrl;
+    return Uri.parse('$baseUrl$path');
+  }
+
+  /// Public helper to construct API URIs from widgets/pages.
+  Uri apiUrl(String path, {bool backup = false}) => _apiUri(path, backup: backup);
+
+  Future<http.Response> _tryRequest(
+    String path,
+    Future<http.Response> Function(Uri uri) request,
+  ) async {
+    try {
+      return await request(_apiUri(path));
+    } catch (e) {
+      debugPrint('Request to $_baseUrl$path failed, trying backup url: $e');
+      return await request(_apiUri(path, backup: true));
+    }
   }
 
   Future<void> fetchInitialData() async {
@@ -40,26 +62,43 @@ class AppState extends ChangeNotifier {
   // Auth State
   String? _currentUserRole; // null, 'admin', 'kasir'
   String? get currentUserRole => _currentUserRole;
+  String? _lastLoginError;
+  String? get lastLoginError => _lastLoginError;
 
   Future<bool> login(String username, String password) async {
+    _lastLoginError = null;
     try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'email': '${username.toLowerCase()}@finaberry.com',
-          'password': password,
-        }),
-      ).timeout(const Duration(seconds: 4));
+      final email = username.contains('@')
+          ? username.toLowerCase()
+          : '${username.toLowerCase()}@gmail.com';
+
+      final response = await _tryRequest(
+        '/login',
+        (uri) => http.post(
+          uri,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'email': email,
+            'password': password,
+          }),
+        ).timeout(const Duration(seconds: 4)),
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         _currentUserRole = data['user']['role'];
         notifyListeners();
         return true;
+      } else {
+        final body = response.body;
+        _lastLoginError = 'Server: ${response.statusCode} - $body';
+        debugPrint('Login failed: ${response.statusCode} ${response.body}');
+        notifyListeners();
       }
     } catch (e) {
+      _lastLoginError = 'Error: $e';
       debugPrint('Login Error: $e');
+      notifyListeners();
     }
     return false;
   }
@@ -76,7 +115,10 @@ class AppState extends ChangeNotifier {
 
   Future<void> fetchMenus() async {
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/menus')).timeout(const Duration(seconds: 4));
+      final response = await _tryRequest(
+        '/menus',
+        (uri) => http.get(uri).timeout(const Duration(seconds: 4)),
+      );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         _menuItems = data.map((jsonItem) {
@@ -118,17 +160,20 @@ class AppState extends ChangeNotifier {
           await fetchMenus();
         }
       } else {
-        final response = await http.post(
-          Uri.parse('$_baseUrl/menus'),
-          headers: {'Content-Type': 'application/json'},
-          body: json.encode({
-            'name': item.name,
-            'description': item.description,
-            'price': item.price,
-            'category': item.category,
-            'imageUrl': item.imageUrl,
-          }),
-        ).timeout(const Duration(seconds: 4));
+        final response = await _tryRequest(
+          '/menus',
+          (uri) => http.post(
+            uri,
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({
+              'name': item.name,
+              'description': item.description,
+              'price': item.price,
+              'category': item.category,
+              'imageUrl': item.imageUrl,
+            }),
+          ).timeout(const Duration(seconds: 4)),
+        );
 
         if (response.statusCode == 200 || response.statusCode == 201) {
           await fetchMenus();
@@ -142,18 +187,37 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> removeMenuItem(String id) async {
-    try {
-      final response = await http.delete(
-        Uri.parse('$_baseUrl/menus/$id'),
-      ).timeout(const Duration(seconds: 4));
-
-      if (response.statusCode == 200) {
-        await fetchMenus();
-      }
-    } catch (e) {
-      debugPrint('Sync warning: Cannot delete menu item from backend, running locally. Error: $e');
+    // If the id looks like a local-only id (created on client), remove locally
+    if (id.startsWith('menu-')) {
       _menuItems.removeWhere((item) => item.id == id);
       notifyListeners();
+      return;
+    }
+
+    try {
+      final response = await _tryRequest(
+        '/menus/$id',
+        (uri) => http.delete(uri).timeout(const Duration(seconds: 4)),
+      );
+
+      // Treat any successful 2xx response as deleted and refresh from server
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        debugPrint('Delete successful for id=$id (status ${response.statusCode})');
+        await fetchMenus();
+        return;
+      }
+
+      // Non-2xx: log and refresh from server to keep UI in sync (don't remove locally)
+      debugPrint('Delete failed for id=$id, status=${response.statusCode}, body=${response.body}');
+      await fetchMenus();
+    } catch (e) {
+      debugPrint('Delete exception for id=$id: $e');
+      // Attempt to re-sync from server so the item will reappear if it wasn't deleted
+      try {
+        await fetchMenus();
+      } catch (_) {
+        // ignore
+      }
     }
   }
 
@@ -183,9 +247,9 @@ class AppState extends ChangeNotifier {
     _cartItems.removeWhere((cartItem) => cartItem.item.id == itemId);
     notifyListeners();
   }
-
+  
   void incrementQuantity(String itemId) {
-    final index = _cartItems.indexWhere((cartItem) => cartItem.item.id == itemId);
+    final index = _cartItems.indexWhere((c) => c.item.id == itemId);
     if (index >= 0) {
       _cartItems[index].quantity += 1;
       notifyListeners();
@@ -193,7 +257,7 @@ class AppState extends ChangeNotifier {
   }
 
   void decrementQuantity(String itemId) {
-    final index = _cartItems.indexWhere((cartItem) => cartItem.item.id == itemId);
+    final index = _cartItems.indexWhere((c) => c.item.id == itemId);
     if (index >= 0) {
       if (_cartItems[index].quantity > 1) {
         _cartItems[index].quantity -= 1;
@@ -208,14 +272,16 @@ class AppState extends ChangeNotifier {
     _cartItems.clear();
     notifyListeners();
   }
-
-  // Order state
   List<OrderModel> _orders = [];
+
   List<OrderModel> get orders => List.unmodifiable(_orders);
 
   Future<void> fetchOrders() async {
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/orders')).timeout(const Duration(seconds: 4));
+      final response = await _tryRequest(
+        '/orders',
+        (uri) => http.get(uri).timeout(const Duration(seconds: 4)),
+      );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         _orders = data.map((jsonOrder) {
@@ -285,17 +351,20 @@ class AppState extends ChangeNotifier {
         };
       }).toList();
 
-      final response = await http.post(
-        Uri.parse('$_baseUrl/orders'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'customerName': customerName,
-          'tableNumber': tableNumber,
-          'paymentMethod': paymentMethod,
-          'total': cachedTotal,
-          'items': itemsList,
-        }),
-      ).timeout(const Duration(seconds: 4));
+      final response = await _tryRequest(
+        '/orders',
+        (uri) => http.post(
+          uri,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'customerName': customerName,
+            'tableNumber': tableNumber,
+            'paymentMethod': paymentMethod,
+            'total': cachedTotal,
+            'items': itemsList,
+          }),
+        ).timeout(const Duration(seconds: 4)),
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         await fetchOrders();
@@ -331,11 +400,14 @@ class AppState extends ChangeNotifier {
     }
 
     try {
-      final response = await http.patch(
-        Uri.parse('$_baseUrl/orders/$orderId/status'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'status': statusStr}),
-      ).timeout(const Duration(seconds: 4));
+      final response = await _tryRequest(
+        '/orders/$orderId/status',
+        (uri) => http.patch(
+          uri,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({'status': statusStr}),
+        ).timeout(const Duration(seconds: 4)),
+      );
 
       if (response.statusCode == 200) {
         await fetchOrders();
