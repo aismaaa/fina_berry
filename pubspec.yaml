@@ -38,6 +38,9 @@ dependencies:
   image_picker: ^1.2.2
   url_launcher: ^6.3.2
   mobile_scanner: ^7.2.0
+  pdf: ^3.12.0
+  printing: ^5.14.3
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
@@ -49,6 +52,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -62,7 +66,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/logo fina berry.jpeg
+    - assets/images/logo fina berry.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -89,3 +93,12 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo fina berry.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/logo fina berry.png"
+  remove_alpha_ios: true
+  min_sdk_size: 21

@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         \App\Models\User::firstOrCreate(
-            ['email' => 'admin@gmail.com'],
+            ['email' => 'admin@finaberry.com'],
             [
                 'name' => 'Admin Fina Berry',
                 'password' => \Illuminate\Support\Facades\Hash::make('password'),
@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
         );
 
         \App\Models\User::firstOrCreate(
-            ['email' => 'kasir@gmail.com'],
+            ['email' => 'kasir@finaberry.com'],
             [
                 'name' => 'Kasir Fina Berry',
                 'password' => \Illuminate\Support\Facades\Hash::make('password'),

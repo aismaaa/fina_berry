@@ -15,16 +15,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create a default test user and default staff accounts for admin/kasir.
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'password' => \Illuminate\Support\Facades\Hash::make('password'),
-            ]
-        );
-
-        $this->call(\Database\Seeders\UserSeeder::class);
-        $this->call(\Database\Seeders\MenuSeeder::class);
+        $this->call([
+            RoleSeeder::class,
+            UserSeeder::class,
+        ]);
     }
 }

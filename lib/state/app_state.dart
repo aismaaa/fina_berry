@@ -9,12 +9,7 @@ import '../src/platform_stub.dart'
   if (dart.library.io) '../src/platform_io.dart';
 
 class AppState extends ChangeNotifier {
-  // Use emulator-friendly localhost for Android emulator (10.0.2.2)
-  final String _baseUrl = isAndroid
-      ? 'http://10.0.2.2:8000/api'
-      : 'http://127.0.0.1:8000/api';
-  // Backup: typical LAN address for running backend on the host machine
-  final String _backupBaseUrl = 'http://192.168.1.11:8000/api';
+  final String _baseUrl = 'http://192.168.0.104:8080/api';
 
   AppState() {
     // Try to load initial data from Laravel backend on startup
@@ -91,9 +86,7 @@ class AppState extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final user = data['user'] ?? {};
-        _currentUserRole = user['role']?.toString() ?? user['name']?.toString();
-        _lastLoginError = null;
+        _currentUserRole = data['user']['role'];
         notifyListeners();
         return true;
       } else {

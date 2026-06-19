@@ -9,12 +9,16 @@ class CheckoutPage extends StatefulWidget {
   final AppState appState;
   final VoidCallback onOrderSuccess;
   final VoidCallback onCancel;
+  final VoidCallback? onNavigateToHome;
+  final VoidCallback? onNavigateToMenu;
 
   const CheckoutPage({
     super.key,
     required this.appState,
     required this.onOrderSuccess,
     required this.onCancel,
+    this.onNavigateToHome,
+    this.onNavigateToMenu,
   });
 
   @override
@@ -350,7 +354,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      const FooterWidget(),
+                      FooterWidget(
+                        onNavigateToHome: widget.onNavigateToHome,
+                        onNavigateToMenu: widget.onNavigateToMenu,
+                      ),
                     ],
                   ),
                 ),
