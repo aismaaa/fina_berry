@@ -38,6 +38,8 @@ class OrderController extends Controller
                     'payment_method' => $validated['paymentMethod'],
                     'total' => $validated['total'],
                     'status' => 'pending',
+                    'payment_status' => 'pending',
+                    'midtrans_order_id' => null,
                 ]);
 
                 foreach ($validated['items'] as $itemData) {
@@ -49,7 +51,7 @@ class OrderController extends Controller
                     }
 
                     $qtyRequested = intval($itemData['quantity']);
-                    if ($menu->quantity < $qtyRequested) {
+                    if ($menu->quantity > 0 && $menu->quantity < $qtyRequested) {
                         throw new \Exception("Insufficient stock for menu id {$menuId}");
                     }
 
@@ -60,9 +62,12 @@ class OrderController extends Controller
                         'price' => $itemData['price'],
                     ]);
 
-                    $menu->quantity = max(0, $menu->quantity - $qtyRequested);
-                    $menu->is_available = $menu->quantity > 0;
-                    $menu->save();
+                    if ($menu->quantity > 0) {
+                        $menu->quantity = max(0, $menu->quantity - $qtyRequested);
+                        $menu->is_available = $menu->quantity > 0;
+                        $menu->save();
+                    }
+
                 }
 
                 return $order;
@@ -134,6 +139,8 @@ class OrderController extends Controller
             'paymentMethod' => $order->payment_method,
             'total' => $order->total,
             'status' => $order->status,
+            'paymentStatus' => $order->payment_status,
+            'midtransOrderId' => $order->midtrans_order_id,
             'date' => $order->created_at?->toIso8601String(),
             'items' => $order->items->map(fn (OrderItem $item) => [
                 'quantity' => $item->quantity,
