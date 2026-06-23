@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\User::firstOrCreate(
+        \App\Models\User::updateOrCreate(
             ['email' => 'admin@finaberry.com'],
             [
                 'name' => 'Admin Fina Berry',
@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
             ],
         );
 
-        \App\Models\User::firstOrCreate(
+        \App\Models\User::updateOrCreate(
             ['email' => 'kasir@finaberry.com'],
             [
                 'name' => 'Kasir Fina Berry',

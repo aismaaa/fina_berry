@@ -17,11 +17,10 @@ class DashboardTest extends TestCase
      */
     public function test_can_get_dashboard_stats(): void
     {
-        $user = User::factory()->create();
+        $token = 'test-token-123';
+        $user = User::factory()->create(['api_token' => $token]);
         Role::create(['name' => 'user']);
         $user->roles()->attach(1);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
 
         $response = $this->withHeader('Authorization', "Bearer $token")
             ->getJson('/api/dashboard/stats');
@@ -42,8 +41,8 @@ class DashboardTest extends TestCase
      */
     public function test_can_get_dashboard_analytics(): void
     {
-        $user = User::factory()->create();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = 'test-token-456';
+        $user = User::factory()->create(['api_token' => $token]);
 
         $response = $this->withHeader('Authorization', "Bearer $token")
             ->getJson('/api/dashboard/analytics');
