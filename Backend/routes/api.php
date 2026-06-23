@@ -29,3 +29,7 @@ Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index']);
 Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store']);
 Route::patch('/orders/{id}/status', [\App\Http\Controllers\OrderController::class, 'updateStatus']);
 Route::delete('/orders/{id}', [\App\Http\Controllers\OrderController::class, 'destroy']);
+
+// Reports
+Route::get('/reports/orders', [\App\Http\Controllers\ReportController::class, 'orders']);
+Route::get('/reports/export', [\App\Http\Controllers\ReportController::class, 'export']);
