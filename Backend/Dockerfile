@@ -1,7 +1,7 @@
 # ============================================================
 # STAGE 1: Build dependencies (composer & npm)
 # ============================================================
-FROM php:8.2-fpm-alpine AS builder
+FROM php:8.3-fpm-alpine AS builder
 
 # Install system dependencies
 RUN apk add --no-cache \
@@ -54,7 +54,7 @@ RUN composer run-script post-autoload-dump || true
 # ============================================================
 # STAGE 2: Production image (lebih kecil)
 # ============================================================
-FROM php:8.2-fpm-alpine AS production
+FROM php:8.3-fpm-alpine AS production
 
 # Install runtime dependencies only
 RUN apk add --no-cache \

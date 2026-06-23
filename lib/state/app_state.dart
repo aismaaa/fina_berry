@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppState extends ChangeNotifier {
-  final String _baseUrl = 'http://192.168.101.32:8080/api';
+  final String _baseUrl = 'https://www.finnaberry.my.id/api';
   String get baseUrl => _baseUrl;
 
   AppState() {
@@ -21,10 +21,13 @@ class AppState extends ChangeNotifier {
    String _formatImageUrl(dynamic url) {
     if (url == null) return '';
     String strUrl = url.toString();
+    // Sudah URL lengkap (https://...) — langsung pakai
+    if (strUrl.startsWith('http://') || strUrl.startsWith('https://')) {
+      return strUrl;
+    }
+    // Relative path (misal: /storage/images/...) — tambahkan base domain
     if (strUrl.startsWith('/')) {
-      return 'http://192.168.101.32:8080$strUrl';
-    } else if (strUrl.startsWith('http://localhost')) {
-      return strUrl.replaceFirst('http://localhost', 'http://192.168.101.32:8080');
+      return 'https://www.finnaberry.my.id$strUrl';
     }
     return strUrl;
   }
