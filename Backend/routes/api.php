@@ -33,3 +33,8 @@ Route::delete('/orders/{id}', [\App\Http\Controllers\OrderController::class, 'de
 // Reports
 Route::get('/reports/orders', [\App\Http\Controllers\ReportController::class, 'orders']);
 Route::get('/reports/export', [\App\Http\Controllers\ReportController::class, 'export']);
+
+// Midtrans Payment & Webhook
+Route::post('/midtrans/snap-token', [\App\Http\Controllers\MidtransController::class, 'createSnapToken']);
+Route::post('/midtrans/notification', [\App\Http\Controllers\MidtransController::class, 'notification']);
+Route::get('/midtrans/debug', [\App\Http\Controllers\MidtransController::class, 'debug']);
