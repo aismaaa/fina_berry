@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import '../services/chat_service.dart';
 
+import '../state/app_state.dart';
+
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final AppState appState;
+  const ChatScreen({super.key, required this.appState});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -23,6 +26,9 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..repeat();
+
+    // Inject database asli ke AI
+    _chatService.setMenuContext(widget.appState.menuItems);
 
     // Pesan selamat datang dari bot
     Future.delayed(const Duration(milliseconds: 500), () {
