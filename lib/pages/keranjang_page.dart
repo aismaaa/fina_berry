@@ -83,20 +83,20 @@ class KeranjangPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(16),
                               child: Image.network(
                                 item.imageUrl,
-                                width: 80,
-                                height: 80,
+                                width: 70,
+                                height: 70,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
-                                    width: 80,
-                                    height: 80,
+                                    width: 70,
+                                    height: 70,
                                     color: Colors.grey[300],
                                     child: const Icon(Icons.fastfood, color: Colors.grey),
                                   );
                                 },
                               ),
                             ),
-                            const SizedBox(width: 16),
+                            const SizedBox(width: 12),
 
                             // Text Content
                             Expanded(
@@ -144,22 +144,23 @@ class KeranjangPage extends StatelessWidget {
                                     children: [
                                       // Quantity Selector
                                       Row(
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
                                           _buildQuantityBtn(
                                             icon: Icons.remove,
                                             onTap: () => appState.decrementQuantity(item.id),
                                             isDark: isDark,
                                           ),
-                                          const SizedBox(width: 12),
+                                          const SizedBox(width: 8),
                                           Text(
                                             '${cartItem.quantity}',
                                             style: TextStyle(
-                                              fontSize: 16,
+                                              fontSize: 15,
                                               fontWeight: FontWeight.bold,
                                               color: isDark ? Colors.white : Colors.grey[900],
                                             ),
                                           ),
-                                          const SizedBox(width: 12),
+                                          const SizedBox(width: 8),
                                           _buildQuantityBtn(
                                             icon: Icons.add,
                                             onTap: () => appState.incrementQuantity(item.id),
@@ -167,14 +168,17 @@ class KeranjangPage extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-
                                       // Price
-                                      Text(
-                                        formatPrice(cartItem.totalPrice),
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF10B981),
+                                      Flexible(
+                                        child: Text(
+                                          formatPrice(cartItem.totalPrice),
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF10B981),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.end,
                                         ),
                                       ),
                                     ],
@@ -225,20 +229,28 @@ class KeranjangPage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Total',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.grey[900],
+                    Expanded(
+                      child: Text(
+                        'Total',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.grey[900],
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Text(
-                      formatPrice(appState.cartTotal),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF10B981),
+                    const SizedBox(width: 12),
+                    Flexible(
+                      child: Text(
+                        formatPrice(appState.cartTotal),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF10B981),
+                        ),
+                        textAlign: TextAlign.end,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -398,19 +410,27 @@ class KeranjangPage extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: isDark ? Colors.grey[400] : Colors.grey[600],
-            fontSize: 14,
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
+              fontSize: 14,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        Text(
-          value,
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.grey[800],
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            value,
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.grey[800],
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+            textAlign: TextAlign.end,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],

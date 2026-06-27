@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FooterWidget extends StatelessWidget {
   final VoidCallback? onNavigateToHome;
@@ -87,27 +88,31 @@ class FooterWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Fina Berry',
-                  style: TextStyle(
-                    color: isDark ? Colors.white : const Color(0xFF1F2937),
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Fina Berry',
+                    style: TextStyle(
+                      color: isDark ? Colors.white : const Color(0xFF1F2937),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                Text(
-                  'WARUNG MAKAN',
-                  style: TextStyle(
-                    color: const Color(0xFF10B981),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.2,
+                  Text(
+                    'WARUNG MAKAN',
+                    style: TextStyle(
+                      color: const Color(0xFF10B981),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.2,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -126,34 +131,51 @@ class FooterWidget extends StatelessWidget {
             _buildSocialIcon(
               Icons.camera_alt_outlined,
               isDark,
-            ), // Instagram placeholder
+              url: 'https://www.instagram.com/fina.berry?igsh=MWR0OGRpdXB2bzQwMg==',
+              color: const Color(0xFFE1306C), // Instagram pink
+            ),
             const SizedBox(width: 12),
             _buildSocialIcon(
               Icons.chat_bubble_outline,
               isDark,
-            ), // WhatsApp placeholder
-            const SizedBox(width: 12),
-            _buildSocialIcon(Icons.facebook_outlined, isDark),
+              url: 'https://wa.me/6285647731631',
+              color: const Color(0xFF25D366), // WhatsApp green
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildSocialIcon(IconData icon, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF161F30) : Colors.grey[50],
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+  Widget _buildSocialIcon(
+    IconData icon,
+    bool isDark, {
+    required String url,
+    required Color color,
+  }) {
+    return GestureDetector(
+      onTap: () async {
+        final uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.12),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 1.5,
+          ),
         ),
-      ),
-      child: Icon(
-        icon,
-        color: isDark ? Colors.grey[400] : Colors.grey[700],
-        size: 18,
+        child: Icon(
+          icon,
+          color: color,
+          size: 20,
+        ),
       ),
     );
   }
@@ -268,7 +290,11 @@ class FooterWidget extends StatelessWidget {
             if (constraints.maxWidth > 500) {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [_buildCopyright(isDark), _buildMadeWithLove(isDark)],
+                children: [
+                  Expanded(child: _buildCopyright(isDark)),
+                  const SizedBox(width: 16),
+                  Flexible(child: _buildMadeWithLove(isDark)),
+                ],
               );
             } else {
               return Column(
@@ -313,11 +339,14 @@ class FooterWidget extends StatelessWidget {
       children: [
         const Icon(Icons.favorite, color: Colors.redAccent, size: 14),
         const SizedBox(width: 6),
-        Text(
-          'Dibuat dengan cinta untuk pelanggan kami',
-          style: TextStyle(
-            color: isDark ? Colors.grey[500] : Colors.grey[600],
-            fontSize: 12,
+        Flexible(
+          child: Text(
+            'Dibuat dengan cinta untuk pelanggan kami',
+            style: TextStyle(
+              color: isDark ? Colors.grey[500] : Colors.grey[600],
+              fontSize: 12,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],

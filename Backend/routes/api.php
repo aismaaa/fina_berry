@@ -29,3 +29,12 @@ Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index']);
 Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store']);
 Route::patch('/orders/{id}/status', [\App\Http\Controllers\OrderController::class, 'updateStatus']);
 Route::delete('/orders/{id}', [\App\Http\Controllers\OrderController::class, 'destroy']);
+
+// Reports
+Route::get('/reports/orders', [\App\Http\Controllers\ReportController::class, 'orders']);
+Route::get('/reports/export', [\App\Http\Controllers\ReportController::class, 'export']);
+
+// Midtrans Payment & Webhook
+Route::post('/midtrans/snap-token', [\App\Http\Controllers\MidtransController::class, 'createSnapToken']);
+Route::post('/midtrans/notification', [\App\Http\Controllers\MidtransController::class, 'notification']);
+Route::get('/midtrans/debug', [\App\Http\Controllers\MidtransController::class, 'debug']);
