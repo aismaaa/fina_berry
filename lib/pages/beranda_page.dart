@@ -126,8 +126,8 @@ class BerandaPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24),
                         image: const DecorationImage(
-                          image: NetworkImage(
-                            'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop&q=80',
+                          image: AssetImage(
+                            'assets/images/menu lezat.png',
                           ),
                           fit: BoxFit.cover,
                         ),

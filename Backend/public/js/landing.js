@@ -14,27 +14,10 @@ document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => navLinks.classList.remove('open'));
 });
 
-// ===== MENU TABS FILTER =====
-const tabBtns = document.querySelectorAll('.tab-btn');
-const menuCards = document.querySelectorAll('.menu-card');
-tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        tabBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const category = btn.dataset.category;
-        menuCards.forEach(card => {
-            if (category === 'all' || card.dataset.category === category) {
-                card.classList.remove('hidden');
-                card.style.animation = 'fadeInUp 0.4s ease forwards';
-            } else {
-                card.classList.add('hidden');
-            }
-        });
-    });
-});
+
 
 // ===== SCROLL REVEAL =====
-const reveals = document.querySelectorAll('.about-grid, .menu-card, .gallery-item, .testi-card, .contact-item');
+const reveals = document.querySelectorAll('.about-grid, .gallery-item, .testi-card, .contact-item');
 reveals.forEach(el => el.classList.add('reveal'));
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -71,6 +54,55 @@ window.addEventListener('scroll', () => {
         if (navLink && scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
             document.querySelectorAll('.nav-links a').forEach(a => a.style.color = '');
             navLink.style.color = '#10B981';
+        }
+    });
+});
+
+// ===== ORBIT MENU CLICK – UPDATE CENTER IMAGE + INFO CARD =====
+const orbitItems = document.querySelectorAll('.orbit-item');
+const centerImg  = document.getElementById('centerPlateImg');
+const infoCard   = document.getElementById('orbitInfoCard');
+const infoName   = document.getElementById('orbitInfoName');
+const infoDesc   = document.getElementById('orbitInfoDesc');
+const infoPrice  = document.getElementById('orbitInfoPrice');
+const infoRating = document.getElementById('orbitInfoRating');
+const infoBadge  = document.getElementById('orbitInfoBadge');
+
+orbitItems.forEach(item => {
+    item.addEventListener('click', () => {
+        const imgSrc  = item.querySelector('img').src;
+        const name    = item.dataset.name;
+        const desc    = item.dataset.desc;
+        const price   = item.dataset.price;
+        const rating  = item.dataset.rating;
+        const badge   = item.dataset.badge;
+
+        // --- Highlight selected item ---
+        orbitItems.forEach(i => i.classList.remove('selected'));
+        item.classList.add('selected');
+
+        // --- Animate center image swap ---
+        centerImg.classList.add('switching');
+        setTimeout(() => {
+            centerImg.src = imgSrc;
+            centerImg.classList.remove('switching');
+        }, 320);
+
+        // --- Update info card content ---
+        infoName.textContent   = name;
+        infoDesc.textContent   = desc;
+        infoPrice.textContent  = price;
+        infoRating.textContent = rating;
+        infoBadge.textContent  = badge;
+
+        // --- Show info card (animate in) ---
+        if (!infoCard.classList.contains('active')) {
+            infoCard.classList.add('active');
+        } else {
+            // Re-trigger animation for already-visible card
+            infoCard.style.animation = 'none';
+            infoCard.offsetHeight; // reflow
+            infoCard.style.animation = '';
         }
     });
 });

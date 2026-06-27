@@ -22,16 +22,28 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
   String _selectedCategory = 'Semua';
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    // Filter items based on selected category
+    // Filter items based on selected category AND search query
     final filteredItems = widget.appState.menuItems.where((item) {
-      if (_selectedCategory == 'Semua') return true;
-      return item.category == _selectedCategory;
+      final matchesCategory =
+          _selectedCategory == 'Semua' || item.category == _selectedCategory;
+      final matchesSearch = _searchQuery.isEmpty ||
+          item.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          item.description.toLowerCase().contains(_searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
     }).toList();
 
     return RefreshIndicator(
@@ -52,7 +64,7 @@ class _MenuPageState extends State<MenuPage> {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.w800,
-                  fontFamily: 'Montserrat',
+                  fontFamily: 'times new roman',
                   color: isDark ? Colors.white : Colors.grey[900],
                 ),
               ),
@@ -64,7 +76,67 @@ class _MenuPageState extends State<MenuPage> {
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
+
+              // Search Bar
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF161F30) : Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(isDark ? 0.3 : 0.07),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                  },
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.grey[900],
+                    fontSize: 15,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Cari menu...',
+                    hintStyle: TextStyle(
+                      color: isDark ? Colors.grey[500] : Colors.grey[400],
+                    ),
+                    prefixIcon: Icon(
+                      Icons.search_rounded,
+                      color: const Color(0xFF10B981),
+                      size: 22,
+                    ),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: Icon(
+                              Icons.close_rounded,
+                              color: isDark ? Colors.grey[400] : Colors.grey[500],
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _searchQuery = '';
+                                _searchController.clear();
+                              });
+                            },
+                          )
+                        : null,
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 14,
+                      horizontal: 4,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
 
               // Categories row
               SingleChildScrollView(
@@ -114,12 +186,27 @@ class _MenuPageState extends State<MenuPage> {
         if (filteredItems.isEmpty)
           Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 40.0),
-              child: Text(
-                'Tidak ada item menu',
-                style: TextStyle(
-                  color: isDark ? Colors.grey[400] : Colors.grey[600],
-                ),
+              padding: const EdgeInsets.symmetric(vertical: 48.0),
+              child: Column(
+                children: [
+                  Icon(
+                    _searchQuery.isNotEmpty
+                        ? Icons.search_off_rounded
+                        : Icons.restaurant_menu_outlined,
+                    size: 56,
+                    color: isDark ? Colors.grey[600] : Colors.grey[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    _searchQuery.isNotEmpty
+                        ? 'Menu "$_searchQuery" tidak ditemukan'
+                        : 'Tidak ada item menu',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                  ),
+                ],
               ),
             ),
           )

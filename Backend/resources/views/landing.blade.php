@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warung Fina Berry – Cita Rasa Nusantara</title>
+    <title>Warung Fina Berry â€“ Cita Rasa Nusantara</title>
     <!-- Menambahkan Favicon (Logo di Tab Browser) -->
     <link rel="icon" href="{{ asset('images/Fina Berry.png') }}" type="image/png">
     <meta name="description" content="Warung Fina Berry, tempat makan khas Indonesia dengan cita rasa autentik. Nikmati bakso, soto, nasi goreng, dan berbagai menu lezat lainnya.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/landing.css?v=22222') }}">
+    <link rel="stylesheet" href="{{ asset('css/landing.css?v=' . time()) }}">
 </head>
 <body>
 
@@ -54,7 +54,7 @@
             <div class="stat-divider"></div>
             <div class="stat"><span class="stat-num">20+</span><span class="stat-label">Menu Pilihan</span></div>
             <div class="stat-divider"></div>
-            <div class="stat"><span class="stat-num">5⭐</span><span class="stat-label">Rating</span></div>
+            <div class="stat"><span class="stat-num">5â­</span><span class="stat-label">Rating</span></div>
         </div>
     </div>
     <div class="hero-scroll">
@@ -117,100 +117,97 @@
 <!-- ===== MENU ===== -->
 <section class="menu-section" id="menu">
     <div class="container">
-        <div class="section-header">
-            <p class="section-tag">Menu Kami</p>
-            <h2 class="section-title">Menu <span class="highlight">Unggulan</span> Pilihan</h2>
-            <p class="section-desc">Setiap menu dimasak segar sesuai pesanan dengan cita rasa terbaik</p>
-        </div>
-        <div class="menu-tabs">
-            <button class="tab-btn active" data-category="all">Semua</button>
-            <button class="tab-btn" data-category="makanan">Makanan</button>
-            <button class="tab-btn" data-category="cemilan">Cemilan</button>
-            <button class="tab-btn" data-category="minuman">Minuman</button>
-        </div>
-        <div class="menu-grid" id="menuGrid">
-            <div class="menu-card" data-category="makanan">
-                <div class="menu-img-wrap">
-                    <img src="{{ asset('images/menu_bakso.png') }}" alt="Bakso Daging Sapi">
-                    <span class="menu-badge">Best Seller</span>
-                </div>
-                <div class="menu-info">
-                    <h3>Bakso Daging Sapi</h3>
-                    <p>Bakso sapi kenyal dengan kuah kaldu gurih, mie, dan topping lengkap</p>
-                    <div class="menu-footer">
-                        <span class="menu-price">Rp 15.000</span>
-                        <span class="menu-rating">⭐ 4.9</span>
+        <!-- Rotating Menu Featured Section -->
+        <div class="menu-orbit-section">
+            <!-- Left Text Content -->
+            <div class="menu-orbit-content">
+                <p class="menu-orbit-tag">Menu Pilihan</p>
+                <h2 class="menu-orbit-title">Eksplorasi<br><span class="highlight-light">Rasa Autentik</span><br>Nusantara</h2>
+                <p class="menu-orbit-desc">Setiap hidangan dimasak segar sesuai pesanan dengan resep rahasia keluarga. Rasakan kenikmatan dari berbagai pilihan menu makanan, minuman, hingga cemilan lezat.</p>
+
+                <!-- Menu Info Card (muncul saat klik orbit item) -->
+                <div class="orbit-info-card" id="orbitInfoCard">
+                    <div class="orbit-info-inner">
+                        <div class="orbit-info-badge" id="orbitInfoBadge">Best Seller</div>
+                        <h3 class="orbit-info-name" id="orbitInfoName">Bakso Daging Sapi</h3>
+                        <p class="orbit-info-desc" id="orbitInfoDesc">Bakso sapi kenyal dengan kuah kaldu gurih, mie, dan topping lengkap — cita rasa autentik yang menggugah selera.</p>
+                        <div class="orbit-info-footer">
+                            <span class="orbit-info-price" id="orbitInfoPrice">Rp 15.000</span>
+                            <span class="orbit-info-rating" id="orbitInfoRating">⭐ 4.9</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="menu-card" data-category="makanan">
-                <div class="menu-img-wrap">
-                    <img src="{{ asset('images/ayam bakar kampung penyet .jpg') }}" alt="Ayam Goreng Kampung">
-                    <span class="menu-badge popular">Spesial</span>
-                </div>
-                <div class="menu-info">
-                    <h3>Ayam Goreng/Bakar Kampung</h3>
-                    <p>Paket ayam kampung komplit dengan nasi, lalapan, dan sambal mantap</p>
-                    <div class="menu-footer">
-                        <span class="menu-price">Mulai Rp 25.000</span>
-                        <span class="menu-rating">⭐ 4.9</span>
+
+            <!-- Right Orbiting UI -->
+            <div class="menu-orbit-visual">
+                <div class="orbit-wrapper">
+                    <!-- Main Center Image -->
+                    <div class="center-plate">
+                        <img id="centerPlateImg" src="{{ asset('images/menu_bakso.png') }}" alt="Main Dish">
                     </div>
-                </div>
-            </div>
-            <div class="menu-card" data-category="cemilan">
-                <div class="menu-img-wrap">
-                    <img src="{{ asset('images/mendoan.jpeg') }}" alt="Mendoan">
-                </div>
-                <div class="menu-info">
-                    <h3>Mendoan</h3>
-                    <p>Tempe mendoan hangat khas banyumasan, seporsi isi banyak, cocok buat ngemil</p>
-                    <div class="menu-footer">
-                        <span class="menu-price">Rp 10.000</span>
-                        <span class="menu-rating">⭐ 4.8</span>
-                    </div>
-                </div>
-            </div>
-            <div class="menu-card" data-category="minuman">
-                <div class="menu-img-wrap">
-                    <img src="{{ asset('images/WhatsApp Image 2026-05-15 at 08.56.33 (1).jpeg') }}" alt="Jus Strawberry">
-                    <span class="menu-badge popular">Segar</span>
-                </div>
-                <div class="menu-info">
-                    <h3>Jus Strawberry</h3>
-                    <p>Jus strawberry segar perpaduan manis dan asam untuk pelepas dahaga</p>
-                    <div class="menu-footer">
-                        <span class="menu-price">Rp 12.000</span>
-                        <span class="menu-rating">⭐ 4.8</span>
-                    </div>
-                </div>
-            </div>
-            <div class="menu-card" data-category="minuman">
-                <div class="menu-img-wrap">
-                    <img src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Teh Tawar">
-                </div>
-                <div class="menu-info">
-                    <h3>Teh Tawar</h3>
-                    <p>Seduhan daun teh murni yang menyejukkan, pas sebagai teman makan</p>
-                    <div class="menu-footer">
-                        <span class="menu-price">Rp 2.000</span>
-                        <span class="menu-rating">⭐ 4.7</span>
-                    </div>
-                </div>
-            </div>
-            <div class="menu-card" data-category="minuman">
-                <div class="menu-img-wrap">
-                    <img src="https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Jus Jeruk">
-                </div>
-                <div class="menu-info">
-                    <h3>Jus Jeruk</h3>
-                    <p>Perasan jeruk murni pilihan yang segar dan kaya akan vitamin C</p>
-                    <div class="menu-footer">
-                        <span class="menu-price">Rp 10.000</span>
-                        <span class="menu-rating">⭐ 4.8</span>
+                    
+                    <!-- Orbit Ring and Items -->
+                    <div class="orbit-ring">
+                        <!-- Orbit Item 1 -->
+                        <div class="orbit-item item-1"
+                            data-name="Bakso Daging Sapi"
+                            data-desc="Bakso sapi kenyal dengan kuah kaldu gurih, mie, dan topping lengkap — cita rasa autentik yang menggugah selera."
+                            data-price="Rp 15.000"
+                            data-rating="⭐ 4.9"
+                            data-badge="Best Seller">
+                            <img src="{{ asset('images/menu_bakso.png') }}" alt="Bakso Daging Sapi">
+                        </div>
+                        <!-- Orbit Item 2 -->
+                        <div class="orbit-item item-2"
+                            data-name="Mendoan"
+                            data-desc="Tempe mendoan hangat khas Banyumasan, seporsi isi banyak dan renyah — cocok buat ngemil santai kapan saja."
+                            data-price="Rp 10.000"
+                            data-rating="⭐ 4.8"
+                            data-badge="Cemilan">
+                            <img src="{{ asset('images/mendoan.jpeg') }}" alt="Mendoan">
+                        </div>
+                        <!-- Orbit Item 3 -->
+                        <div class="orbit-item item-3"
+                            data-name="Ayam Bakar Kampung"
+                            data-desc="Paket ayam kampung komplit dengan nasi, lalapan segar, dan sambal pedas mantap yang bikin nagih."
+                            data-price="Mulai Rp 25.000"
+                            data-rating="⭐ 4.9"
+                            data-badge="Spesial">
+                            <img src="{{ asset('images/ayam bakar kampung penyet .jpg') }}" alt="Ayam Bakar Kampung">
+                        </div>
+                        <!-- Orbit Item 4 -->
+                        <div class="orbit-item item-4"
+                            data-name="Jus Strawberry"
+                            data-desc="Jus strawberry segar perpaduan manis dan asam alami — minuman pelepas dahaga favorit pelanggan."
+                            data-price="Rp 12.000"
+                            data-rating="⭐ 4.8"
+                            data-badge="Segar">
+                            <img src="{{ asset('images/WhatsApp Image 2026-05-15 at 08.56.33 (1).jpeg') }}" alt="Jus Strawberry">
+                        </div>
+                        <!-- Orbit Item 5 -->
+                        <div class="orbit-item item-5"
+                            data-name="Soto Ayam"
+                            data-desc="Soto ayam dengan kuah bening gurih, suwiran daging ayam lembut, dan pelengkap yang kaya rempah."
+                            data-price="Rp 12.000"
+                            data-rating="⭐ 4.7"
+                            data-badge="Favorit">
+                            <img src="{{ asset('images/soto ayam.jpg') }}" alt="Soto Ayam">
+                        </div>
+                        <!-- Orbit Item 6 -->
+                        <div class="orbit-item item-6"
+                            data-name="Soto Ayam Kumplit"
+                            data-desc="Soto ayam versi lengkap dengan telur rebus, kentang goreng, dan perkedel — porsi lebih besar, lebih puas."
+                            data-price="Rp 15.000"
+                            data-rating="⭐ 4.8"
+                            data-badge="Populer">
+                            <img src="{{ asset('images/soto ayam kumplit.jpg') }}" alt="Soto Ayam Kumplit">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </section>
 
@@ -222,25 +219,25 @@
             <h2 class="section-title">Momen <span class="highlight">Lezat</span> Kami</h2>
         </div>
         <div class="gallery-grid">
-            <div class="gallery-item large">
-                <img src="{{ asset('images/hero_food.png') }}" alt="Hidangan Fina Berry">
-                <div class="gallery-overlay"><span>Hidangan Spesial</span></div>
+            <div class="gallery-item item-hero">
+                <img src="{{ asset('images/hero_food.png') }}" alt="Gallery 1">
+                <div class="gallery-overlay"><span>Momen Spesial</span></div>
             </div>
-            <div class="gallery-item">
+            <div class="gallery-item item-top-right">
                 <img src="{{ asset('images/soto ayam kumplit.jpg') }}" alt="soto ayam kumplit">
                 <div class="gallery-overlay"><span>soto ayam kumplit</span></div>
             </div>
-            <div class="gallery-item">
+            <div class="gallery-item item-bottom-right">
                 <img src="{{ asset('images/wrung.jpeg') }}" alt="Suasana Warung">
                 <div class="gallery-overlay"><span>Suasana Warung</span></div>
             </div>
-            <div class="gallery-item">
+            <div class="gallery-item item-bottom-left">
                 <img src="{{ asset('images/fina.jpeg') }}" alt="Warung Fina Berry">
                 <div class="gallery-overlay"><span>Warung Fina Berry</span></div>
             </div>
-            <div class="gallery-item">
-                <img src="{{ asset('images/ayam bakar kampung.jpg') }}" alt="ayam bakar">
-                <div class="gallery-overlay"><span>ayam bakar</span></div>
+            <div class="gallery-item item-bottom-right-large">
+                <img src="{{ asset('images/ayam bakar kampung (2).jpg') }}" alt="ayam bakar kampung">
+                <div class="gallery-overlay"><span>ayam bakar kampung</span></div>
             </div>
         </div>
     </div>
@@ -291,8 +288,8 @@
                 <h2>Lapar? Yuk <span class="highlight-light">Pesan Sekarang!</span></h2>
                 <p>Tersedia layanan pesan antar dan dine-in. Unduh aplikasi kami untuk pengalaman memesan yang lebih mudah dan praktis.</p>
                 <div class="order-btns">
-                    <a href="https://drive.google.com/file/d/1EdzhFFvf3XLfmAgLhDC9F7_DyGqpfAMr/view?usp=drive_link" class="btn-primary">📱 Download App</a>
-                    <a href="https://wa.me/6281234567890" class="btn-whatsapp" target="_blank">💬 WhatsApp</a>
+                    <a href="https://www.mediafire.com/file/r15ylr53fiu5tfo/app-release.apk/file" class="btn-primary">ðŸ“± Download App</a>
+                    <a href="https://wa.me/6281234567890" class="btn-whatsapp" target="_blank">ðŸ’¬ WhatsApp</a>
                 </div>
             </div>
             <div class="order-img">
@@ -305,7 +302,7 @@
                             <p class="app-welcome-text">Welcome to</p>
                             <div class="app-title-text">Warung Fina Berry</div>
                             <p class="app-desc-text">Rasakan sensasi hidangan lezat dengan bahan berkualitas terbaik.</p>
-                            <div class="app-btn-new">Lihat Menu <span style="font-size: 14px;">🍴</span></div>
+                            <div class="app-btn-new">Lihat Menu <span style="font-size: 14px;">ðŸ´</span></div>
                         </div>
                     </div>
                 </div>
@@ -327,14 +324,14 @@
                     <span class="contact-icon">📍</span>
                     <div>
                         <strong>Alamat</strong>
-                        <p>Lokasi Warung Makan Fina Berry berada di kawasan D’LAS (Desa Wisata Lembah Asri), tepatnya di area dekat pintu keluar, Desa Serang, Kecamatan Karangreja, Kabupaten Purbalingga, Jawa Tengah.</p>
+                        <p>Lokasi Warung Makan Fina Berry berada di kawasan Dâ€™LAS (Desa Wisata Lembah Asri), tepatnya di area dekat pintu keluar, Desa Serang, Kecamatan Karangreja, Kabupaten Purbalingga, Jawa Tengah.</p>
                     </div>
                 </div>
                 <div class="contact-item">
-                    <span class="contact-icon">🕐</span>
+                    <span class="contact-icon">⏰</span>
                     <div>
                         <strong>Jam Buka</strong>
-                        <p>Senin Hari: 08.00 – 17.00</p>
+                        <p>Senin Hari: 08.00 â€“ 17.00</p>
                     </div>
                 </div>
                 <div class="contact-item">
@@ -389,7 +386,7 @@
             <!-- Developer 1 -->
             <div class="team-row-new team-row-reverse reveal">
                 <div class="team-photo-side">
-                    <img src="{{ asset('images/aisma.jpeg') }}" alt="Developer 1" class="team-photo">
+                    <img src="{{ asset('images/Aismaaa.jpeg') }}" alt="Developer 1" class="team-photo">
                 </div>
                 <div class="team-info-side">
                     <div class="team-role-tag">
@@ -407,7 +404,7 @@
             <!-- Developer 2 -->
             <div class="team-row-new reveal">
                 <div class="team-photo-side">
-                    <img src="{{ asset('images/Lulu.jpeg') }}" alt="Developer 2" class="team-photo">
+                    <img src="{{ asset('images/Lulu Aeni.jpeg') }}" alt="Developer 2" class="team-photo">
                 </div>
                 <div class="team-info-side">
                     <div class="team-role-tag">
@@ -435,7 +432,7 @@
                     <h3 class="team-name-big">Sobur</h3>
                     <p class="team-desc-text">Merancang antarmuka yang intuitif dan responsif. Mengubah desain menjadi kode yang interaktif dan memanjakan mata pengguna.</p>
                     <blockquote class="team-quote-text">
-                        "UI yang baik seperti lelucon, jika harus dijelaskan, maka itu tidak bagus."
+                        "Semakin sedikit pengguna membutuhkan panduan, semakin baik kualitas UI."
                     </blockquote>
                 </div>
             </div>
@@ -451,9 +448,9 @@
                         <span class="role-text">BACKEND DEVELOPER</span>
                     </div>
                     <h3 class="team-name-big">MUHAMMAD FAJAR</h3>
-                    <p class="team-desc-text">Spesialis Backend yang memastikan aplikasi berjalan lancar di semua perangkat. Berfokus pada performa tinggi dan UX native yang nyaman.</p>
+                    <p class="team-desc-text">Berfokus pada pengembangan API, autentikasi pengguna, dan integrasi layanan backend</p>
                     <blockquote class="team-quote-text">
-                        "One step closer to another achievement."
+                        "Membangun Logika, Menghubungkan Sistem."
                     </blockquote>
                 </div>
             </div>
@@ -466,12 +463,12 @@
                 <div class="team-info-side">
                     <div class="team-role-tag">
                         <span class="role-icon">&lt;/&gt;</span>
-                        <span class="role-text">Developer Engineering</span>
+                        <span class="role-text">BACKEND DEVELOPER</span>
                     </div>
                     <h3 class="team-name-big">M. Fauzi Akbar Rafsanjani</h3>
-                    <p class="team-desc-text">Pengembang yang berdedikasi dengan fokus pada pengembangan perangkat lunak yang efisien dan andal. Memiliki pengalaman dalam berbagai teknologi dan selalu berusaha untuk memberikan solusi terbaik bagi pengguna.</p>
+                    <p class="team-desc-text">Berfokus pada pengembangan logika bisnis, integrasi database, dan optimasi performa server agar sistem dapat berjalan stabil dan responsif..</p>
                     <blockquote class="team-quote-text">
-                        "If you can dream it, you can code it."
+                        "Mengelola Data, Menjaga Stabilitas."
                     </blockquote>
                 </div>
             </div>
@@ -503,9 +500,11 @@
     <div class="container">
         <div class="footer-top">
             <div class="footer-brand">
-                <span class="logo-icon">🍓</span>
-                <span class="footer-logo">Fina Berry</span>
-                <p>Warung makan dengan cita rasa autentik Indonesia yang menggunakan bahan segar pilihan setiap harinya.Lokasi Warung Makan Fina Berry berada di kawasan D’LAS (Desa Wisata Lembah Asri), tepatnya di area dekat pintu keluar, Desa Serang, Kecamatan Karangreja, Kabupaten Purbalingga, Jawa Tengah.</p>
+                <div class="footer-logo-wrapper" style="display: flex; align-items: center; gap: 16px; margin-bottom: 12px;">
+                    <span class="logo-icon"><img src="{{ asset('images/Fina Berry.png') }}" alt="Fina Berry Logo" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; max-width: 60px;"></span>
+                    <span class="footer-logo" style="margin: 0; padding: 0;">Fina Berry</span>
+                </div>
+                <p>Warung makan dengan cita rasa autentik Indonesia yang menggunakan bahan segar pilihan setiap harinya.Lokasi Warung Makan Fina Berry berada di kawasan Dâ€™LAS (Desa Wisata Lembah Asri), tepatnya di area dekat pintu keluar, Desa Serang, Kecamatan Karangreja, Kabupaten Purbalingga, Jawa Tengah.</p>
             </div>
             <div class="footer-links">
                 <h4>Tautan</h4>
@@ -544,3 +543,4 @@
 <script src="{{ asset('js/landing.js') }}"></script>
 </body>
 </html>
+
