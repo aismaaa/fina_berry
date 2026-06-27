@@ -288,21 +288,21 @@
                 <h2>Lapar? Yuk <span class="highlight-light">Pesan Sekarang!</span></h2>
                 <p>Tersedia layanan pesan antar dan dine-in. Unduh aplikasi kami untuk pengalaman memesan yang lebih mudah dan praktis.</p>
                 <div class="order-btns">
-                    <a href="https://www.mediafire.com/file/r15ylr53fiu5tfo/app-release.apk/file" class="btn-primary">ðŸ“± Download App</a>
-                    <a href="https://wa.me/6281234567890" class="btn-whatsapp" target="_blank">ðŸ’¬ WhatsApp</a>
+                    <a href="https://www.mediafire.com/file/r15ylr53fiu5tfo/app-release.apk/file" class="btn-primary">📲 Download App</a>
+                    <a href="https://wa.me/6281234567890" class="btn-whatsapp" target="_blank">💬 WhatsApp</a>
                 </div>
             </div>
             <div class="order-img">
                 <div class="phone-mockup">
                     <div class="phone-screen">
-                        <div class="app-preview">
+                        <div class="app-preview"> 
                             <div class="app-logo-wrapper">
                                 <img src="{{ asset('images/Fina Berry.png') }}" alt="Fina Berry Logo">
                             </div>
                             <p class="app-welcome-text">Welcome to</p>
                             <div class="app-title-text">Warung Fina Berry</div>
                             <p class="app-desc-text">Rasakan sensasi hidangan lezat dengan bahan berkualitas terbaik.</p>
-                            <div class="app-btn-new">Lihat Menu <span style="font-size: 14px;">ðŸ´</span></div>
+                            <div class="app-btn-new">Lihat Menu <span style="font-size: 14px;"></span></div>
                         </div>
                     </div>
                 </div>
