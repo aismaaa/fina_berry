@@ -1,50 +1,72 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ChatService {
-  // n8n berjalan di VPS port 5678
-  // Jika sudah ada reverse proxy/domain khusus untuk n8n, ganti URL di bawah
-  static const String _n8nBaseUrl = 'https://www.finnaberry.my.id/webhook';
-  static const String _webhookPath = 'ai-chatbot';
+  // Ambil API Key dari file .env
+  static String get _groqApiKey => dotenv.env['GROQ_API_KEY'] ?? '';
+  
+  static const String _groqApiUrl = 'https://api.groq.com/openai/v1/chat/completions';
+  static const String _model = 'llama-3.3-70b-versatile'; // Model terbaru Groq
 
+  // Inisialisasi history dengan system prompt dinamis
   final List<Map<String, dynamic>> _conversationHistory = [];
+
+  void setMenuContext(List<dynamic> menus) {
+    if (_conversationHistory.isNotEmpty) return; // Jangan set ulang jika sudah ada
+
+    String menuList = menus.map((m) => '- ${m.name}: Rp ${m.price.toInt()} (${m.category})${m.isPopular ? " ⭐ BEST SELLER" : ""}').join('\n');
+
+    String systemPrompt = '''Kamu adalah AI asisten kasir "Fina Berry". Jawablah dengan ramah, informatif, ringkas, dan bahasa Indonesia.
+
+Informasi Fina Berry: Restoran yang menyajikan aneka makanan dan minuman lezat.
+
+Daftar Menu Asli dari Database:
+$menuList
+
+Panduan menjawab:
+1. Jika ditanya harga atau menu, jawab SESUAI dengan daftar di atas saja.
+2. Jika ditanya rekomendasi, rekomendasikan menu dari daftar di atas yang harganya rasional atau menarik.
+3. Selalu tawarkan tambahan minuman atau cemilan jika pelanggan memesan makanan.
+4. Jika pesanan tidak ada di menu, mohon maaf dan katakan menu tersebut tidak tersedia di Fina Berry.
+''';
+
+    _conversationHistory.add({
+      'role': 'system', 
+      'content': systemPrompt
+    });
+  }
+
+
 
   Future<String> sendMessage(String message) async {
     // Tambah pesan user ke history
     _conversationHistory.add({'role': 'user', 'content': message});
 
     try {
-      final response = await http
-          .post(
-            Uri.parse('$_n8nBaseUrl/$_webhookPath'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'message': message,
-              'history': _conversationHistory,
-            }),
-          )
-          .timeout(const Duration(seconds: 30));
+      final response = await http.post(
+        Uri.parse(_groqApiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_groqApiKey',
+        },
+        body: jsonEncode({
+          'model': _model,
+          'messages': _conversationHistory,
+          'temperature': 0.7, // Tingkat kreativitas (0.0 - 1.0)
+        }),
+      ).timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
-        // n8n biasanya mengembalikan output di field 'output' atau 'text' atau 'reply'
-        final reply =
-            data['output'] as String? ??
-            data['text'] as String? ??
-            data['reply'] as String? ??
-            'Maaf, tidak ada respons.';
+        final reply = data['choices'][0]['message']['content'] as String;
 
         // Simpan balasan bot ke history
         _conversationHistory.add({'role': 'assistant', 'content': reply});
 
         return reply;
-      } else if (response.statusCode == 404) {
-        return 'Webhook tidak ditemukan. Pastikan path webhook sudah benar dan workflow sudah Published.';
-      } else if (response.statusCode == 429) {
-        return 'Terlalu banyak permintaan. Coba lagi sebentar.';
       } else {
-        return 'Error ${response.statusCode}: Gagal mendapatkan respons dari n8n.';
+        return 'Maaf, terjadi kesalahan pada AI (Status: ${response.statusCode}). Coba lagi nanti.';
       }
     } on Exception catch (e) {
       // Hapus pesan terakhir dari history jika gagal
@@ -53,14 +75,14 @@ class ChatService {
       }
       final errMsg = e.toString();
       if (errMsg.contains('TimeoutException')) {
-        return 'Koneksi timeout. Periksa internet kamu dan pastikan n8n berjalan.';
+        return 'Koneksi timeout. Periksa internet kamu.';
       }
       return 'Koneksi gagal: $e';
     }
   }
 
-  /// Reset riwayat percakapan
+  /// Reset riwayat percakapan (menyisakan system prompt saja)
   void clearHistory() {
-    _conversationHistory.clear();
+    _conversationHistory.removeWhere((msg) => msg['role'] != 'system');
   }
 }

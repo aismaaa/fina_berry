@@ -10,8 +10,11 @@ import 'pages/splash_screen.dart';
 import 'pages/chat_screen.dart';
 import 'pages/riwayat_transaksi_page.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env.flutter");
   await initializeDateFormatting('id_ID', null);
   runApp(const MyApp());
 }
@@ -173,7 +176,7 @@ class _MainLayoutState extends State<MainLayout> {
             Navigator.push(
               context,
               PageRouteBuilder(
-                pageBuilder: (_, animation, __) => const ChatScreen(),
+                pageBuilder: (_, animation, __) => ChatScreen(appState: widget.appState),
                 transitionsBuilder: (_, animation, __, child) {
                   return SlideTransition(
                     position:
