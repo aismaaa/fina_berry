@@ -32,9 +32,19 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 // ===== CONTACT FORM =====
 document.getElementById('contactForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    const nama  = document.getElementById('nama').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const pesan = document.getElementById('pesan').value.trim();
+
+    const text = `Halo Warung Fina Berry! 👋\n\nNama  : ${nama}\nEmail : ${email}\nPesan : ${pesan}`;
+    const waUrl = `https://wa.me/6285647731631?text=${encodeURIComponent(text)}`;
+
     const btn = this.querySelector('button[type="submit"]');
-    btn.textContent = 'Terkirim! ✅';
+    btn.textContent = 'Membuka WhatsApp... ✅';
     btn.style.background = '#059669';
+
+    window.open(waUrl, '_blank');
+
     setTimeout(() => {
         btn.textContent = 'Kirim Pesan ✉️';
         btn.style.background = '';
@@ -104,5 +114,22 @@ orbitItems.forEach(item => {
             infoCard.offsetHeight; // reflow
             infoCard.style.animation = '';
         }
+    });
+});
+
+// ===== MENU TABS FILTER =====
+const menuTabs  = document.querySelectorAll('.menu-tab');
+const menuCards = document.querySelectorAll('.full-menu-card');
+
+menuTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        menuTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const cat = tab.dataset.cat;
+        menuCards.forEach(card => {
+            const match = cat === 'semua' || card.dataset.cat === cat;
+            card.classList.toggle('hidden', !match);
+        });
     });
 });

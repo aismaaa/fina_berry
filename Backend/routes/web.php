@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('landing');
+    $menus = \App\Models\Menu::orderBy('category')->orderBy('name')->get()->groupBy('category');
+    return view('landing', compact('menus'));
 });
 
 // Preview laporan penjualan (dengan data dummy)
