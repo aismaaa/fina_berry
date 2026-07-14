@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warung Fina Berry â€“ Cita Rasa Nusantara</title>
+    <title>Warung Fina Berry Cita Rasa Nusantara</title>
     <!-- Menambahkan Favicon (Logo di Tab Browser) -->
     <link rel="icon" href="{{ asset('images/Fina Berry.png') }}" type="image/png">
     <meta name="description" content="Warung Fina Berry, tempat makan khas Indonesia dengan cita rasa autentik. Nikmati bakso, soto, nasi goreng, dan berbagai menu lezat lainnya.">
@@ -50,11 +50,11 @@
             <a href="#about" class="btn-ghost">Tentang Kami</a>
         </div>
         <div class="hero-stats">
-            <div class="stat"><span class="stat-num">500+</span><span class="stat-label">Pelanggan Puas</span></div>
+            <div class="stat"><span class="stat-num">1000+</span><span class="stat-label">Pelanggan Puas</span></div>
             <div class="stat-divider"></div>
-            <div class="stat"><span class="stat-num">20+</span><span class="stat-label">Menu Pilihan</span></div>
+            <div class="stat"><span class="stat-num">40+</span><span class="stat-label">Menu Pilihan</span></div>
             <div class="stat-divider"></div>
-            <div class="stat"><span class="stat-num">5â­</span><span class="stat-label">Rating</span></div>
+            <div class="stat"><span class="stat-num">5.0</span><span class="stat-label">Rating</span></div>
         </div>
     </div>
     <div class="hero-scroll">
@@ -112,6 +112,7 @@
             </div>
         </div>
     </div>
+
 </section>
 
 <!-- ===== MENU ===== -->
@@ -209,7 +210,47 @@
         </div>
 
     </div>
+
+    <!-- ===== MENU LENGKAP ===== -->
+    <div class="full-menu-wrap">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-tag">Pilihan Kami</p>
+                <h2 class="section-title">Menu <span class="highlight">Lengkap</span></h2>
+            </div>
+
+            <!-- Tab Filter -->
+            <div class="menu-tabs" id="menuTabs">
+                <button class="menu-tab active" data-cat="semua">Semua</button>
+                <button class="menu-tab" data-cat="Makanan">🍽️ Makanan</button>
+                <button class="menu-tab" data-cat="Minuman">🥤 Minuman</button>
+                <button class="menu-tab" data-cat="Cemilan">🍟 Cemilan</button>
+            </div>
+
+            <!-- Menu Grid -->
+            <div class="full-menu-grid" id="fullMenuGrid">
+                @foreach($menus as $category => $items)
+                    @foreach($items as $item)
+                    <div class="full-menu-card" data-cat="{{ $item->category }}">
+                        <div class="full-menu-img-wrap">
+                            <img src="{{ asset($item->image_url) }}" alt="{{ $item->name }}"
+                                 onerror="this.src='{{ asset('images/Fina Berry.png') }}'">
+                            <span class="full-menu-cat-badge">{{ $item->category }}</span>
+                        </div>
+                        <div class="full-menu-info">
+                            <h4>{{ $item->name }}</h4>
+                            <span class="full-menu-price">Rp {{ number_format($item->price, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+                    @endforeach
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+
 </section>
+
 
 <!-- ===== GALLERY ===== -->
 <section class="gallery-section" id="gallery">
@@ -241,6 +282,7 @@
             </div>
         </div>
     </div>
+
 </section>
 
 <!-- ===== TESTIMONIAL ===== -->
@@ -256,7 +298,7 @@
                 <p class="testi-text">"Bakso di sini enak banget! Kuahnya gurih, dagingnya kenyal. Sudah langganan sejak lama dan tidak pernah kecewa."</p>
                 <div class="testi-author">
                     <div class="testi-avatar">A</div>
-                    <div><strong>pajar DPO</strong><span>Pelanggan Setia</span></div>
+                    <div><strong>Pajar Calon persiden</strong><span>Pelanggan Setia</span></div>
                 </div>
             </div>
             <div class="testi-card featured">
@@ -277,6 +319,7 @@
             </div>
         </div>
     </div>
+
 </section>
 
 <!-- ===== ORDER CTA ===== -->
@@ -287,25 +330,60 @@
                 <p class="section-tag light">Pesan Sekarang</p>
                 <h2>Lapar? Yuk <span class="highlight-light">Pesan Sekarang!</span></h2>
                 <p>Tersedia layanan pesan antar dan dine-in. Unduh aplikasi kami untuk pengalaman memesan yang lebih mudah dan praktis.</p>
-                <div class="order-btns">
-                    <a href="https://www.mediafire.com/file/r15ylr53fiu5tfo/app-release.apk/file" class="btn-primary">ðŸ“± Download App</a>
-                    <a href="https://wa.me/6281234567890" class="btn-whatsapp" target="_blank">ðŸ’¬ WhatsApp</a>
-                </div>
-            </div>
-            <div class="order-img">
-                <div class="phone-mockup">
-                    <div class="phone-screen">
-                        <div class="app-preview">
-                            <div class="app-logo-wrapper">
-                                <img src="{{ asset('images/Fina Berry.png') }}" alt="Fina Berry Logo">
-                            </div>
-                            <p class="app-welcome-text">Welcome to</p>
-                            <div class="app-title-text">Warung Fina Berry</div>
-                            <p class="app-desc-text">Rasakan sensasi hidangan lezat dengan bahan berkualitas terbaik.</p>
-                            <div class="app-btn-new">Lihat Menu <span style="font-size: 14px;">ðŸ´</span></div>
+                <p>Di Bawah Ini Adalah Beberapa Fitur Yang Tersedia Pada Aplikasi Kami</p>
+                <!-- FITUR APLIKASI -->
+                <div class="app-features-grid">
+                    <div class="app-feature-item">
+                        <span class="app-feature-icon">🍽️</span>
+                        <div>
+                            <strong>Jelajahi Menu</strong>
+                            <p>Lihat semua menu lengkap dengan foto, deskripsi, dan harga</p>
+                        </div>
+                    </div>
+                    <div class="app-feature-item">
+                        <span class="app-feature-icon">🛒</span>
+                        <div>
+                            <strong>Keranjang Belanja</strong>
+                            <p>Tambah, ubah jumlah, atau hapus item dengan mudah</p>
+                        </div>
+                    </div>
+                    <div class="app-feature-item">
+                        <span class="app-feature-icon">🎟️</span>
+                        <div>
+                            <strong>Kode Voucher</strong>
+                            <p>Hemat lebih banyak dengan voucher diskon eksklusif</p>
+                        </div>
+                    </div>
+                    <div class="app-feature-item">
+                        <span class="app-feature-icon">💳</span>
+                        <div>
+                            <strong>Checkout Mudah</strong>
+                            <p>Proses pembayaran cepat dengan ringkasan pesanan lengkap</p>
+                        </div>
+                    </div>
+                    <div class="app-feature-item">
+                        <span class="app-feature-icon">📊</span>
+                        <div>
+                            <strong>Dashboard Admin</strong>
+                            <p>Kelola menu, pesanan, dan laporan penjualan real-time</p>
+                        </div>
+                    </div>
+                    <div class="app-feature-item">
+                        <span class="app-feature-icon">🖨️</span>
+                        <div>
+                            <strong>Dashboard Kasir</strong>
+                            <p>Bisa untuk mencetak struk,menerima pesanan,menerima pembayaran</p>
                         </div>
                     </div>
                 </div>
+
+                <div class="order-btns">
+                    <a href="https://www.mediafire.com/file/r15ylr53fiu5tfo/app-release.apk/file" class="btn-primary">📲 Download App</a>
+                    <a href="https://wa.me/6285647731631" class="btn-whatsapp" target="_blank" rel="noopener">💬 WhatsApp</a>
+                </div>
+            </div>
+            <div class="order-img">
+                <img src="{{ asset('images/aplikasi.png') }}" alt="Fina Berry App Preview" class="app-mockup-img">
             </div>
         </div>
     </div>
@@ -324,14 +402,14 @@
                     <span class="contact-icon">📍</span>
                     <div>
                         <strong>Alamat</strong>
-                        <p>Lokasi Warung Makan Fina Berry berada di kawasan Dâ€™LAS (Desa Wisata Lembah Asri), tepatnya di area dekat pintu keluar, Desa Serang, Kecamatan Karangreja, Kabupaten Purbalingga, Jawa Tengah.</p>
+                        <p>Lokasi Warung Makan Fina Berry berada di kawasan D'LAS (Desa Wisata Lembah Asri), tepatnya di area dekat pintu keluar, Desa Serang, Kecamatan Karangreja, Kabupaten Purbalingga, Jawa Tengah.</p>
                     </div>
                 </div>
                 <div class="contact-item">
                     <span class="contact-icon">⏰</span>
                     <div>
                         <strong>Jam Buka</strong>
-                        <p>Senin Hari: 08.00 â€“ 17.00</p>
+                        <p>Senin Hari: 08.00 - 17.00</p>
                     </div>
                 </div>
                 <div class="contact-item">
@@ -349,7 +427,8 @@
                     </div>
                 </div>
                 <div class="social-links">
-                    <a href="https://www.instagram.com/fina.berry?igsh=azdla2ZtZWV0bWpo" class="social-btn">Instagram</a>
+                    <a href="https://www.instagram.com/fina.berry?igsh=azdla2ZtZWV0bWpo" class="social-btn" target="_blank" rel="noopener">Instagram</a>
+                    <a href="https://wa.me/6285647731631" class="social-btn" target="_blank" rel="noopener">WhatsApp</a>
                 </div>
             </div>
             <div class="contact-form-wrap">
@@ -504,7 +583,7 @@
                     <span class="logo-icon"><img src="{{ asset('images/Fina Berry.png') }}" alt="Fina Berry Logo" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; max-width: 60px;"></span>
                     <span class="footer-logo" style="margin: 0; padding: 0;">Fina Berry</span>
                 </div>
-                <p>Warung makan dengan cita rasa autentik Indonesia yang menggunakan bahan segar pilihan setiap harinya.Lokasi Warung Makan Fina Berry berada di kawasan Dâ€™LAS (Desa Wisata Lembah Asri), tepatnya di area dekat pintu keluar, Desa Serang, Kecamatan Karangreja, Kabupaten Purbalingga, Jawa Tengah.</p>
+                <p>Warung makan dengan cita rasa autentik Indonesia yang menggunakan bahan segar pilihan setiap harinya.Lokasi Warung Makan Fina Berry berada di kawasan D'LAS (Desa Wisata Lembah Asri), tepatnya di area dekat pintu keluar, Desa Serang, Kecamatan Karangreja, Kabupaten Purbalingga, Jawa Tengah.</p>
             </div>
             <div class="footer-links">
                 <h4>Tautan</h4>
@@ -529,7 +608,7 @@
             <div class="footer-links">
                 <h4>Ikuti Kami</h4>
                 <ul>
-                    <li><a href="">Instagram</a></li>
+                    <li><a href="https://www.instagram.com/fina.berry?igsh=azdla2ZtZWV0bWpo" target="_blank" rel="noopener">Instagram</a></li>
                 </ul>
             </div>
         </div>
