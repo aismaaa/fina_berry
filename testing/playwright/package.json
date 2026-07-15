@@ -1,0 +1,19 @@
+{
+  "name": "fina-berry-ui-tests",
+  "version": "1.0.0",
+  "description": "Playwright UI Testing untuk Aplikasi Fina Berry",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report",
+    "test:auth": "playwright test tests/admin.spec.js",
+    "test:menu": "playwright test tests/menu.spec.js",
+    "test:cart": "playwright test tests/cart.spec.js",
+    "test:admin": "playwright test tests/admin.spec.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "typescript": "^5.4.5"
+  }
+}

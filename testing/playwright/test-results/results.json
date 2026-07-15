@@ -1,0 +1,2374 @@
+{
+  "config": {
+    "argv": [
+      "D:\\laragon\\bin\\nodejs\\node-v18\\node.exe",
+      "D:\\laragon\\www\\fina_berry\\testing\\playwright\\node_modules\\@playwright\\test\\cli.js",
+      "test"
+    ],
+    "configFile": "D:\\laragon\\www\\fina_berry\\testing\\playwright\\playwright.config.js",
+    "rootDir": "D:/laragon/www/fina_berry/testing/playwright/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/laragon/www/fina_berry/testing/playwright/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "ui-desktop",
+        "name": "ui-desktop",
+        "testDir": "D:/laragon/www/fina_berry/testing/playwright/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "D:/laragon/www/fina_berry/testing/playwright/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "ui-mobile-android",
+        "name": "ui-mobile-android",
+        "testDir": "D:/laragon/www/fina_berry/testing/playwright/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "D:/laragon/www/fina_berry/testing/playwright/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "ui-mobile-ios",
+        "name": "ui-mobile-ios",
+        "testDir": "D:/laragon/www/fina_berry/testing/playwright/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report",
+          "open": "never"
+        }
+      ],
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "admin.spec.js",
+      "file": "admin.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "UI – Halaman Admin & Dashboard",
+          "file": "admin.spec.js",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "UI-ADMIN-001: Aplikasi Flutter termuat di browser",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10959,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:11:08.146Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73482573f1568b679d78-30be1ae8a60245fead8d",
+              "file": "admin.spec.js",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "UI-ADMIN-002: Meta title halaman benar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10707,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "App title: flutter_application_finna_berry\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:11:19.500Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73482573f1568b679d78-d4d0e6854a481249a514",
+              "file": "admin.spec.js",
+              "line": 39,
+              "column": 3
+            },
+            {
+              "title": "UI-ADMIN-003: Tampilan mobile panel admin ter-render",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10507,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:11:30.225Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73482573f1568b679d78-b71575fdd712ea99f549",
+              "file": "admin.spec.js",
+              "line": 50,
+              "column": 3
+            },
+            {
+              "title": "UI-ADMIN-004: Element Flutter view ter-render",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14174,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:11:40.753Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73482573f1568b679d78-06f4035ccbe468e27c2c",
+              "file": "admin.spec.js",
+              "line": 63,
+              "column": 3
+            },
+            {
+              "title": "UI-ADMIN-001: Aplikasi Flutter termuat di browser",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9745,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:15:02.769Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73482573f1568b679d78-8841ac091fe9106124fc",
+              "file": "admin.spec.js",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "UI-ADMIN-002: Meta title halaman benar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16325,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "App title: flutter_application_finna_berry\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:15:16.227Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73482573f1568b679d78-1ceeaae0776067d13265",
+              "file": "admin.spec.js",
+              "line": 39,
+              "column": 3
+            },
+            {
+              "title": "UI-ADMIN-003: Tampilan mobile panel admin ter-render",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16438,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:15:32.572Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73482573f1568b679d78-21d89c9f658bb3ef1040",
+              "file": "admin.spec.js",
+              "line": 50,
+              "column": 3
+            },
+            {
+              "title": "UI-ADMIN-004: Element Flutter view ter-render",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9968,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:15:49.043Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73482573f1568b679d78-a2b212d2e3c8081a75c8",
+              "file": "admin.spec.js",
+              "line": 63,
+              "column": 3
+            },
+            {
+              "title": "UI-ADMIN-001: Aplikasi Flutter termuat di browser",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5202,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:18:50.765Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73482573f1568b679d78-e5f0dc144c3dba5ba6db",
+              "file": "admin.spec.js",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "UI-ADMIN-002: Meta title halaman benar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4434,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "App title: flutter_application_finna_berry\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:18:56.102Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73482573f1568b679d78-0aed8b65fa5cd144dd49",
+              "file": "admin.spec.js",
+              "line": 39,
+              "column": 3
+            },
+            {
+              "title": "UI-ADMIN-003: Tampilan mobile panel admin ter-render",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5512,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:19:00.555Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73482573f1568b679d78-15d2b76bc068112fcba2",
+              "file": "admin.spec.js",
+              "line": 50,
+              "column": 3
+            },
+            {
+              "title": "UI-ADMIN-004: Element Flutter view ter-render",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4459,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:19:06.086Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73482573f1568b679d78-eb884c3a3d8b1557b026",
+              "file": "admin.spec.js",
+              "line": 63,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "cart.spec.js",
+      "file": "cart.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "UI – Halaman Keranjang & Checkout",
+          "file": "cart.spec.js",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "UI-CART-001: Aplikasi keranjang termuat di browser",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10944,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:11:54.964Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ceb0bea1dd12be5aadb7-08ea3e0b1faeb1958ddd",
+              "file": "cart.spec.js",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "UI-CART-002: Elemen utama Flutter Web ter-render dengan sukses",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10859,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:12:05.931Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ceb0bea1dd12be5aadb7-c4187bc95837f17a70c9",
+              "file": "cart.spec.js",
+              "line": 38,
+              "column": 3
+            },
+            {
+              "title": "UI-CART-003: Layout checkout responsif pada resolusi desktop",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13777,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:12:16.824Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ceb0bea1dd12be5aadb7-2fcd2e906b8fbbde6684",
+              "file": "cart.spec.js",
+              "line": 50,
+              "column": 3
+            },
+            {
+              "title": "UI-CART-004: Layout checkout responsif pada resolusi mobile",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10624,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:12:30.620Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ceb0bea1dd12be5aadb7-68432a6450d26aeccc28",
+              "file": "cart.spec.js",
+              "line": 63,
+              "column": 3
+            },
+            {
+              "title": "UI-CART-001: Aplikasi keranjang termuat di browser",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9773,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:15:59.052Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ceb0bea1dd12be5aadb7-cd36c5561ccfa235c205",
+              "file": "cart.spec.js",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "UI-CART-002: Elemen utama Flutter Web ter-render dengan sukses",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9800,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:16:08.848Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ceb0bea1dd12be5aadb7-48e3d0e30b81223bcef3",
+              "file": "cart.spec.js",
+              "line": 38,
+              "column": 3
+            },
+            {
+              "title": "UI-CART-003: Layout checkout responsif pada resolusi desktop",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10168,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:16:18.666Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ceb0bea1dd12be5aadb7-dca6177d51631f63d749",
+              "file": "cart.spec.js",
+              "line": 50,
+              "column": 3
+            },
+            {
+              "title": "UI-CART-004: Layout checkout responsif pada resolusi mobile",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10194,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:16:28.870Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ceb0bea1dd12be5aadb7-da115102db7359c82c27",
+              "file": "cart.spec.js",
+              "line": 63,
+              "column": 3
+            },
+            {
+              "title": "UI-CART-001: Aplikasi keranjang termuat di browser",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5973,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:19:10.576Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ceb0bea1dd12be5aadb7-d3c73492ea37f5d8d212",
+              "file": "cart.spec.js",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "UI-CART-002: Elemen utama Flutter Web ter-render dengan sukses",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4534,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:19:16.567Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ceb0bea1dd12be5aadb7-c5765331e28fa6033f22",
+              "file": "cart.spec.js",
+              "line": 38,
+              "column": 3
+            },
+            {
+              "title": "UI-CART-003: Layout checkout responsif pada resolusi desktop",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5055,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:19:21.117Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ceb0bea1dd12be5aadb7-751ba3d8150475fe4d72",
+              "file": "cart.spec.js",
+              "line": 50,
+              "column": 3
+            },
+            {
+              "title": "UI-CART-004: Layout checkout responsif pada resolusi mobile",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4972,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:19:26.191Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ceb0bea1dd12be5aadb7-535428b70409eedeab40",
+              "file": "cart.spec.js",
+              "line": 63,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "menu.spec.js",
+      "file": "menu.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "UI – Halaman Menu & Katalog Product",
+          "file": "menu.spec.js",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "UI-MENU-001: Halaman menu termuat dan menampilkan konten",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12550,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:12:41.270Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "217198a80e852077fe39-5ffea1666c38530635f2",
+              "file": "menu.spec.js",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "UI-MENU-002: Title halaman mengandung nama aplikasi",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10845,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:12:53.843Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "217198a80e852077fe39-2de5f35a4391a5b4483e",
+              "file": "menu.spec.js",
+              "line": 39,
+              "column": 3
+            },
+            {
+              "title": "UI-MENU-003: Flutter view container ter-render di browser",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11096,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:13:04.707Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "217198a80e852077fe39-cbde464ac77bd70c8f00",
+              "file": "menu.spec.js",
+              "line": 49,
+              "column": 3
+            },
+            {
+              "title": "UI-MENU-004: Responsive layout pada resolusi tablet",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10596,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:13:15.823Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "217198a80e852077fe39-5eb8851d21f8b3b48104",
+              "file": "menu.spec.js",
+              "line": 59,
+              "column": 3
+            },
+            {
+              "title": "UI-MENU-001: Halaman menu termuat dan menampilkan konten",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9860,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:16:39.101Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "217198a80e852077fe39-d39033b7777fb0673554",
+              "file": "menu.spec.js",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "UI-MENU-002: Title halaman mengandung nama aplikasi",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9816,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:16:48.978Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "217198a80e852077fe39-06257f4f5c5a71db69a2",
+              "file": "menu.spec.js",
+              "line": 39,
+              "column": 3
+            },
+            {
+              "title": "UI-MENU-003: Flutter view container ter-render di browser",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11153,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:16:58.816Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "217198a80e852077fe39-c36dde217e61cf41cd64",
+              "file": "menu.spec.js",
+              "line": 49,
+              "column": 3
+            },
+            {
+              "title": "UI-MENU-004: Responsive layout pada resolusi tablet",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10066,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:17:09.988Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "217198a80e852077fe39-c5ab52d9cdba60b1dd1b",
+              "file": "menu.spec.js",
+              "line": 59,
+              "column": 3
+            },
+            {
+              "title": "UI-MENU-001: Halaman menu termuat dan menampilkan konten",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5642,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:19:31.192Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "217198a80e852077fe39-2829a8188cd9fa83c66a",
+              "file": "menu.spec.js",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "UI-MENU-002: Title halaman mengandung nama aplikasi",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5627,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:19:36.851Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "217198a80e852077fe39-58bec48a2b2668ad3135",
+              "file": "menu.spec.js",
+              "line": 39,
+              "column": 3
+            },
+            {
+              "title": "UI-MENU-003: Flutter view container ter-render di browser",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3947,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:19:42.492Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "217198a80e852077fe39-9481cd5fa61324858327",
+              "file": "menu.spec.js",
+              "line": 49,
+              "column": 3
+            },
+            {
+              "title": "UI-MENU-004: Responsive layout pada resolusi tablet",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4983,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:19:46.455Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "217198a80e852077fe39-3fa160f2621da4e349be",
+              "file": "menu.spec.js",
+              "line": 59,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "navigation.spec.js",
+      "file": "navigation.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Navigasi & Layout Utama",
+          "file": "navigation.spec.js",
+          "line": 32,
+          "column": 6,
+          "specs": [
+            {
+              "title": "UI-NAV-001: Splash screen menampilkan logo dan nama aplikasi",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9969,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:13:26.449Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-0cba2b586f1540e88bcc",
+              "file": "navigation.spec.js",
+              "line": 43,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-002: Halaman Scan QR tampil setelah splash selesai",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13656,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:13:36.435Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-0f4c40dbd565151532cb",
+              "file": "navigation.spec.js",
+              "line": 57,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-003: Bottom navigation bar memiliki 5 tab",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13772,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:13:50.113Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-36d680907925a0991873",
+              "file": "navigation.spec.js",
+              "line": 72,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-001: Splash screen menampilkan logo dan nama aplikasi",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8910,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:17:20.088Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-0f1cc272cd0ecbb651c8",
+              "file": "navigation.spec.js",
+              "line": 43,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-002: Halaman Scan QR tampil setelah splash selesai",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13102,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:17:29.023Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-5b8e7080f63c09f181e9",
+              "file": "navigation.spec.js",
+              "line": 57,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-003: Bottom navigation bar memiliki 5 tab",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13077,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:17:42.150Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-fd366f6e8df5ff64c5e8",
+              "file": "navigation.spec.js",
+              "line": 72,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-001: Splash screen menampilkan logo dan nama aplikasi",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3649,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:19:51.468Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-e32f0c8e92e04c160608",
+              "file": "navigation.spec.js",
+              "line": 43,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-002: Halaman Scan QR tampil setelah splash selesai",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7542,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:19:55.137Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-e9c86e81d80ff47fb165",
+              "file": "navigation.spec.js",
+              "line": 57,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-003: Bottom navigation bar memiliki 5 tab",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7485,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:20:02.695Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-527222207719f0c206fe",
+              "file": "navigation.spec.js",
+              "line": 72,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Dark/Light Mode Toggle",
+          "file": "navigation.spec.js",
+          "line": 80,
+          "column": 6,
+          "specs": [
+            {
+              "title": "UI-NAV-004: Halaman termuat dengan benar di mode terang dan gelap",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9623,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:14:03.906Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-8266a2de490f764691c5",
+              "file": "navigation.spec.js",
+              "line": 86,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-004: Halaman termuat dengan benar di mode terang dan gelap",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9116,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:17:55.263Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-577abfc32957fbcc7193",
+              "file": "navigation.spec.js",
+              "line": 86,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-004: Halaman termuat dengan benar di mode terang dan gelap",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3577,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:20:10.195Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-67b1a7c3f97f4026fdd6",
+              "file": "navigation.spec.js",
+              "line": 86,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Responsivitas Halaman",
+          "file": "navigation.spec.js",
+          "line": 101,
+          "column": 6,
+          "specs": [
+            {
+              "title": "UI-NAV-005: Tampilan desktop (1280x800) ter-render dengan benar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9579,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:14:13.564Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-6652dade0be8c79af759",
+              "file": "navigation.spec.js",
+              "line": 107,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-006: Tampilan mobile (390x844) ter-render dengan benar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10469,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:14:23.163Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-a902ece8b88df40cf3e7",
+              "file": "navigation.spec.js",
+              "line": 123,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-007: Tampilan tablet (768x1024) ter-render dengan benar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9241,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:14:33.649Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-ffcea024be2da8e56cc4",
+              "file": "navigation.spec.js",
+              "line": 136,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-005: Tampilan desktop (1280x800) ter-render dengan benar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9410,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:18:04.398Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-b499c5b745fc678d8677",
+              "file": "navigation.spec.js",
+              "line": 107,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-006: Tampilan mobile (390x844) ter-render dengan benar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9184,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:18:13.828Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-1252731bc81f5ef6d3aa",
+              "file": "navigation.spec.js",
+              "line": 123,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-007: Tampilan tablet (768x1024) ter-render dengan benar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9290,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:18:23.032Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-4d43d2dccb698489c492",
+              "file": "navigation.spec.js",
+              "line": 136,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-005: Tampilan desktop (1280x800) ter-render dengan benar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4316,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:20:13.788Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-16e7c96e116d20bb4de1",
+              "file": "navigation.spec.js",
+              "line": 107,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-006: Tampilan mobile (390x844) ter-render dengan benar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3944,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:20:18.118Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-563eef44337d98b49e26",
+              "file": "navigation.spec.js",
+              "line": 123,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-007: Tampilan tablet (768x1024) ter-render dengan benar",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4193,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:20:22.080Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-0b18db9dac74c2c3b444",
+              "file": "navigation.spec.js",
+              "line": 136,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Performa Load",
+          "file": "navigation.spec.js",
+          "line": 145,
+          "column": 6,
+          "specs": [
+            {
+              "title": "UI-NAV-008: Halaman termuat dalam 15 detik",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9539,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "⏱ Load time: 9014ms\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:14:42.912Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-470808b4d6e9007acab8",
+              "file": "navigation.spec.js",
+              "line": 151,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-009: Tidak ada error fatal di console saat halaman dimuat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-desktop",
+                  "projectName": "ui-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9528,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:14:52.471Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-ca794fc23b370520fc4a",
+              "file": "navigation.spec.js",
+              "line": 168,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-008: Halaman termuat dalam 15 detik",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8819,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "⏱ Load time: 8354ms\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:18:32.341Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-928319fd36f9c01d132c",
+              "file": "navigation.spec.js",
+              "line": 151,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-009: Tidak ada error fatal di console saat halaman dimuat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-android",
+                  "projectName": "ui-mobile-android",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8879,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:18:41.176Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-7da0dc7e8a45421e9ea7",
+              "file": "navigation.spec.js",
+              "line": 168,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-008: Halaman termuat dalam 15 detik",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3413,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "⏱ Load time: 2938ms\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:20:26.288Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-c2030575242bbe983128",
+              "file": "navigation.spec.js",
+              "line": 151,
+              "column": 3
+            },
+            {
+              "title": "UI-NAV-009: Tidak ada error fatal di console saat halaman dimuat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "ui-mobile-ios",
+                  "projectName": "ui-mobile-ios",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3355,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T16:20:29.714Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce7c070a851ea64285fd-19ed0e228cb8714371c9",
+              "file": "navigation.spec.js",
+              "line": 168,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-07-14T16:11:07.565Z",
+    "duration": 565631.7509999999,
+    "expected": 63,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
