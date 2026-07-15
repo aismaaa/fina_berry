@@ -5,31 +5,36 @@ import '../models/order_model.dart';
 import '../models/bahan_baku_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:typed_data';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../src/platform_stub.dart'
+  if (dart.library.io) '../src/platform_io.dart';
 
 class AppState extends ChangeNotifier {
-  final String _baseUrl = 'https://www.finnaberry.my.id/api';
-  String get baseUrl => _baseUrl;
+  // Use localhost for web, IP for native
+  final String _baseUrl = 'http://localhost:8080/api';
 
   AppState() {
     // Try to load initial data from Laravel backend on startup
     fetchInitialData();
   }
 
-   String _formatImageUrl(dynamic url) {
-    if (url == null) return '';
-    String strUrl = url.toString();
-    // Sudah URL lengkap (https://...) — langsung pakai
-    if (strUrl.startsWith('http://') || strUrl.startsWith('https://')) {
-      return strUrl;
+  Uri _apiUri(String path, {bool backup = false}) {
+    final baseUrl = backup ? _backupBaseUrl : _baseUrl;
+    return Uri.parse('$baseUrl$path');
+  }
+
+  /// Public helper to construct API URIs from widgets/pages.
+  Uri apiUrl(String path, {bool backup = false}) => _apiUri(path, backup: backup);
+
+  Future<http.Response> _tryRequest(
+    String path,
+    Future<http.Response> Function(Uri uri) request,
+  ) async {
+    try {
+      return await request(_apiUri(path));
+    } catch (e) {
+      debugPrint('Request to $_baseUrl$path failed, trying backup url: $e');
+      return await request(_apiUri(path, backup: true));
     }
-    // Relative path (misal: /storage/images/...) — tambahkan base domain
-    if (strUrl.startsWith('/')) {
-      return 'https://www.finnaberry.my.id$strUrl';
-    }
-    return strUrl;
   }
 
   Future<void> fetchInitialData() async {
@@ -402,13 +407,17 @@ class AppState extends ChangeNotifier {
 
       // Treat any successful 2xx response as deleted and refresh from server
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        debugPrint('Delete successful for id=$id (status ${response.statusCode})');
+        debugPrint(
+          'Delete successful for id=$id (status ${response.statusCode})',
+        );
         await fetchMenus();
         return;
       }
 
       // Non-2xx: log and refresh from server to keep UI in sync (don't remove locally)
-      debugPrint('Delete failed for id=$id, status=${response.statusCode}, body=${response.body}');
+      debugPrint(
+        'Delete failed for id=$id, status=${response.statusCode}, body=${response.body}',
+      );
       await fetchMenus();
     } catch (e) {
       debugPrint(
@@ -448,7 +457,7 @@ class AppState extends ChangeNotifier {
     _cartItems.removeWhere((cartItem) => cartItem.item.id == itemId);
     notifyListeners();
   }
-  
+
   void incrementQuantity(String itemId) {
     final index = _cartItems.indexWhere(
       (cartItem) => cartItem.item.id == itemId,
@@ -477,6 +486,7 @@ class AppState extends ChangeNotifier {
     _cartItems.clear();
     notifyListeners();
   }
+
   List<OrderModel> _orders = [];
 
   List<OrderModel> get orders => List.unmodifiable(_orders);
