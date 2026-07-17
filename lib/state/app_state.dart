@@ -104,50 +104,50 @@ class AppState extends ChangeNotifier {
   // ─── Default menu (fallback jika backend & cache kosong) ───────────────────
   static final List<MenuItem> _defaultMenuItems = [
     // Makanan
-    MenuItem(id: 'd1',  name: 'Bakso Daging Sapi',           price: 15000, category: 'Makanan', description: '', imageUrl: ''),
-    MenuItem(id: 'd2',  name: 'Bakso Krewedan',               price: 22000, category: 'Makanan', description: '', imageUrl: ''),
-    MenuItem(id: 'd3',  name: 'Bakso Keju',                   price: 17000, category: 'Makanan', description: '', imageUrl: ''),
-    MenuItem(id: 'd4',  name: 'Soto Ayam',                    price: 10000, category: 'Makanan', description: '', imageUrl: ''),
+    MenuItem(id: 'd1',  name: 'Bakso Daging Sapi',           price: 15000, category: 'Makanan', description: '', imageUrl: 'assets/images/baso sapi.jpg'),
+    MenuItem(id: 'd2',  name: 'Bakso Krewedan',               price: 22000, category: 'Makanan', description: '', imageUrl: 'assets/images/baso krewedan (2).jpg'),
+    MenuItem(id: 'd3',  name: 'Bakso Keju',                   price: 17000, category: 'Makanan', description: '', imageUrl: 'assets/images/baso keju.jpg'),
+    MenuItem(id: 'd4',  name: 'Soto Ayam',                    price: 10000, category: 'Makanan', description: '', imageUrl: 'assets/images/sotyam.jpg'),
     MenuItem(id: 'd5',  name: 'Soto Ayam Komplit',            price: 20000, category: 'Makanan', description: '', imageUrl: ''),
-    MenuItem(id: 'd6',  name: 'Soto Daging Sapi',             price: 23000, category: 'Makanan', description: '', imageUrl: ''),
-    MenuItem(id: 'd7',  name: 'Soto Babat',                   price: 20000, category: 'Makanan', description: '', imageUrl: ''),
-    MenuItem(id: 'd8',  name: 'Nasi Goreng',                  price: 15000, category: 'Makanan', description: '', imageUrl: ''),
+    MenuItem(id: 'd6',  name: 'Soto Daging Sapi',             price: 23000, category: 'Makanan', description: '', imageUrl: 'assets/images/soto daging sapi3.jpg'),
+    MenuItem(id: 'd7',  name: 'Soto Babat',                   price: 20000, category: 'Makanan', description: '', imageUrl: 'assets/images/soto babt...jpg'),
+    MenuItem(id: 'd8',  name: 'Nasi Goreng',                  price: 15000, category: 'Makanan', description: '', imageUrl: 'assets/images/nasigoreng.jpg'),
     MenuItem(id: 'd9',  name: 'Sop Daging Sapi + Nasi',       price: 25000, category: 'Makanan', description: '', imageUrl: ''),
-    MenuItem(id: 'd10', name: 'Ca Kangkung',                  price: 8000,  category: 'Makanan', description: '', imageUrl: ''),
-    MenuItem(id: 'd11', name: 'Paket Ayam Goreng',            price: 15000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
-    MenuItem(id: 'd12', name: 'Paket Ayam Bakar',             price: 15000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
-    MenuItem(id: 'd13', name: 'Paket Ayam Goreng Penyet',     price: 16000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
-    MenuItem(id: 'd14', name: 'Paket Ayam Bakar Penyet',      price: 16000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
-    MenuItem(id: 'd15', name: 'Paket Ayam Goreng Kampung',    price: 25000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
-    MenuItem(id: 'd16', name: 'Paket Ayam Bakar Kampung',     price: 27000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
-    MenuItem(id: 'd17', name: 'Paket Ikan Mujair Goreng',     price: 20000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
-    MenuItem(id: 'd18', name: 'Paket Ikan Mujair Bakar',      price: 20000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: ''),
+    MenuItem(id: 'd10', name: 'Ca Kangkung',                  price: 8000,  category: 'Makanan', description: '', imageUrl: 'assets/images/ca kangkung.jpg'),
+    MenuItem(id: 'd11', name: 'Paket Ayam Goreng',            price: 15000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: 'assets/images/paket ayam goreng.jpg'),
+    MenuItem(id: 'd12', name: 'Paket Ayam Bakar',             price: 15000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: 'assets/images/ayambakarbiasa.jpg'),
+    MenuItem(id: 'd13', name: 'Paket Ayam Goreng Penyet',     price: 16000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: 'assets/images/ayam penyet.jpg'),
+    MenuItem(id: 'd14', name: 'Paket Ayam Bakar Penyet',      price: 16000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: 'assets/images/pnyt.jpg'),
+    MenuItem(id: 'd15', name: 'Paket Ayam Goreng Kampung',    price: 25000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: 'assets/images/paket ayam kampung.jpg'),
+    MenuItem(id: 'd16', name: 'Paket Ayam Bakar Kampung',     price: 27000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: 'assets/images/paket ayam bakar kam.jpg'),
+    MenuItem(id: 'd17', name: 'Paket Ikan Mujair Goreng',     price: 20000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: 'assets/images/paket ikan mujair goreng.jpg'),
+    MenuItem(id: 'd18', name: 'Paket Ikan Mujair Bakar',      price: 20000, category: 'Makanan', description: 'Termasuk Nasi + Lauk + Lalap Sambal', imageUrl: 'assets/images/paket ikan bakar.jpg'),
     // Minuman
-    MenuItem(id: 'd19', name: 'Teh Tawar',                    price: 2000,  category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd20', name: 'Es Teh Tawar',                 price: 3000,  category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd21', name: 'Teh Manis Anget',              price: 3000,  category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd22', name: 'Es Teh Manis',                 price: 4000,  category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd23', name: 'Lemon Tea Anget',              price: 9000,  category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd24', name: 'Es Lemon Tea',                 price: 10000, category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd25', name: 'Jeruk Anget',                  price: 4000,  category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd26', name: 'Es Jeruk',                     price: 5000,  category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd27', name: 'Aneka Kopi',                   price: 3000,  category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd28', name: 'Kopi Cappucino',               price: 5000,  category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd29', name: 'Es Kopi Cappucino',            price: 5000,  category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd30', name: 'Jahe Susu',                    price: 3000,  category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd31', name: 'Soda Susu',                    price: 10000, category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd32', name: 'Wedang Jahe',                  price: 7000,  category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd33', name: 'Jus Strawberry',               price: 12000, category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd19', name: 'Teh Tawar',                    price: 2000,  category: 'Minuman', description: '', imageUrl: 'assets/images/tawar.jpeg'),
+    MenuItem(id: 'd20', name: 'Es Teh Tawar',                 price: 3000,  category: 'Minuman', description: '', imageUrl: 'assets/images/tawar.jpg'),
+    MenuItem(id: 'd21', name: 'Teh Manis Anget',              price: 3000,  category: 'Minuman', description: '', imageUrl: 'assets/images/teh anget.jpeg'),
+    MenuItem(id: 'd22', name: 'Es Teh Manis',                 price: 4000,  category: 'Minuman', description: '', imageUrl: 'assets/images/es te.jpg'),
+    MenuItem(id: 'd23', name: 'Lemon Tea Anget',              price: 9000,  category: 'Minuman', description: '', imageUrl: 'assets/images/lemon tea anget.jpeg'),
+    MenuItem(id: 'd24', name: 'Es Lemon Tea',                 price: 10000, category: 'Minuman', description: '', imageUrl: 'assets/images/lemon tea.jpeg'),
+    MenuItem(id: 'd25', name: 'Jeruk Anget',                  price: 4000,  category: 'Minuman', description: '', imageUrl: 'assets/images/jeruk angget.jpg'),
+    MenuItem(id: 'd26', name: 'Es Jeruk',                     price: 5000,  category: 'Minuman', description: '', imageUrl: 'assets/images/es jeruk.jpeg'),
+    MenuItem(id: 'd27', name: 'Aneka Kopi',                   price: 3000,  category: 'Minuman', description: '', imageUrl: 'assets/images/aneka ki.jpg'),
+    MenuItem(id: 'd28', name: 'Kopi Cappucino',               price: 5000,  category: 'Minuman', description: '', imageUrl: 'assets/images/kopi i.jpg'),
+    MenuItem(id: 'd29', name: 'Es Kopi Cappucino',            price: 5000,  category: 'Minuman', description: '', imageUrl: 'assets/images/es kopi c.jpg'),
+    MenuItem(id: 'd30', name: 'Jahe Susu',                    price: 3000,  category: 'Minuman', description: '', imageUrl: 'assets/images/jahe susu.jpeg'),
+    MenuItem(id: 'd31', name: 'Soda Susu',                    price: 10000, category: 'Minuman', description: '', imageUrl: 'assets/images/soda susu.jpeg'),
+    MenuItem(id: 'd32', name: 'Wedang Jahe',                  price: 7000,  category: 'Minuman', description: '', imageUrl: 'assets/images/wedang.jpeg'),
+    MenuItem(id: 'd33', name: 'Jus Strawberry',               price: 12000, category: 'Minuman', description: '', imageUrl: 'assets/images/jus Strawberry.jpg'),
     MenuItem(id: 'd34', name: 'Jus Melon',                    price: 10000, category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd35', name: 'Jus Jambu',                    price: 10000, category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd35', name: 'Jus Jambu',                    price: 10000, category: 'Minuman', description: '', imageUrl: 'assets/images/jus jambu.jpg'),
     MenuItem(id: 'd36', name: 'Jus Mangga',                   price: 12000, category: 'Minuman', description: '', imageUrl: ''),
     MenuItem(id: 'd37', name: 'Jus Jeruk',                    price: 10000, category: 'Minuman', description: '', imageUrl: ''),
-    MenuItem(id: 'd38', name: 'Jus Buah Naga',                price: 10000, category: 'Minuman', description: '', imageUrl: ''),
+    MenuItem(id: 'd38', name: 'Jus Buah Naga',                price: 10000, category: 'Minuman', description: '', imageUrl: 'assets/images/buah naga.jpg'),
     MenuItem(id: 'd39', name: 'Jus Alpukat',                  price: 12000, category: 'Minuman', description: '', imageUrl: ''),
     // Cemilan
-    MenuItem(id: 'd40', name: 'Mendoan',                      price: 10000, category: 'Cemilan', description: '1 Porsi', imageUrl: ''),
-    MenuItem(id: 'd41', name: 'Tahu Brontak',                 price: 10000, category: 'Cemilan', description: '1 Porsi', imageUrl: ''),
-    MenuItem(id: 'd42', name: 'Pisang Goreng',                price: 10000, category: 'Cemilan', description: '1 Porsi', imageUrl: ''),
+    MenuItem(id: 'd40', name: 'Mendoan',                      price: 10000, category: 'Cemilan', description: '1 Porsi', imageUrl: 'assets/images/mendoan.jpeg'),
+    MenuItem(id: 'd41', name: 'Tahu Brontak',                 price: 10000, category: 'Cemilan', description: '1 Porsi', imageUrl: 'assets/images/tahun berontak.jpg'),
+    MenuItem(id: 'd42', name: 'Pisang Goreng',                price: 10000, category: 'Cemilan', description: '1 Porsi', imageUrl: 'assets/images/pisang.jpg'),
   ];
 
   // Menu items list
@@ -734,6 +734,11 @@ class AppState extends ChangeNotifier {
 
   void addBahanBaku(BahanBaku item) {
     _bahanBakuList.add(item);
+    notifyListeners();
+  }
+
+  void removeBahanBaku(String id) {
+    _bahanBakuList.removeWhere((item) => item.id == id);
     notifyListeners();
   }
 }

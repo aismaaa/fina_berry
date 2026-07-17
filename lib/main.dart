@@ -8,7 +8,7 @@ import 'pages/keranjang_page.dart';
 import 'pages/admin_page.dart';
 import 'pages/splash_screen.dart';
 import 'pages/chat_screen.dart';
-import 'pages/riwayat_transaksi_page.dart';
+
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -230,7 +230,6 @@ class _MainLayoutState extends State<MainLayout> {
         onNavigateToHome: _onNavigateToHome,
         onNavigateToMenu: _onNavigateToMenu,
       ),
-      RiwayatTransaksiPage(appState: widget.appState),
       AdminPage(
         appState: widget.appState,
         onBackToHome: _onNavigateToHome,
@@ -405,11 +404,6 @@ class _MainLayoutState extends State<MainLayout> {
                   child: const Icon(Icons.shopping_cart, color: Color(0xFF10B981)),
                 ),
                 label: 'Keranjang',
-              ),
-              const NavigationDestination(
-                icon: Icon(Icons.history_outlined),
-                selectedIcon: Icon(Icons.history, color: Color(0xFF10B981)),
-                label: 'Riwayat',
               ),
               const NavigationDestination(
                 icon: Icon(Icons.grid_view_outlined),

@@ -65,9 +65,43 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
     final reply = await _chatService.sendMessage(text);
 
+    String displayReply = reply;
+    final orderRegExp = RegExp(r'\[ORDER:\s*(.+?)\]', caseSensitive: false);
+    final matches = orderRegExp.allMatches(reply);
+
+    if (matches.isNotEmpty) {
+      for (final match in matches) {
+        final menuName = match.group(1)?.trim();
+        if (menuName != null) {
+          try {
+            final menuItem = widget.appState.menuItems.firstWhere(
+              (m) => m.name.toLowerCase() == menuName.toLowerCase(),
+            );
+            widget.appState.addToCart(menuItem);
+            
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('✅ ${menuItem.name} ditambahkan ke keranjang!'),
+                  backgroundColor: const Color(0xFF10B981),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            }
+          } catch (e) {
+             debugPrint('Menu tidak ditemukan dari bot: $menuName');
+          }
+        }
+      }
+      displayReply = reply.replaceAll(orderRegExp, '').trim();
+      if (displayReply.isEmpty) {
+        displayReply = "Pesanan telah ditambahkan ke keranjang.";
+      }
+    }
+
     if (mounted) {
       setState(() {
-        _messages.add({'role': 'bot', 'text': reply});
+        _messages.add({'role': 'bot', 'text': displayReply});
         _isLoading = false;
       });
       _scrollToBottom();

@@ -57,6 +57,15 @@ class MenuImageWidget extends StatelessWidget {
         fit: fit,
         errorBuilder: (ctx, err, stack) => placeholder,
       );
+    } else if (imageUrl.startsWith('assets/')) {
+      // Gambar bawaan lokal (assets)
+      img = Image.asset(
+        imageUrl,
+        height: height,
+        width: width ?? double.infinity,
+        fit: fit,
+        errorBuilder: (ctx, err, stack) => placeholder,
+      );
     } else {
       img = placeholder;
     }

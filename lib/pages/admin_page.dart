@@ -7,8 +7,11 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../models/menu_item.dart';
+import '../models/bahan_baku_model.dart';
 import '../widgets/footer_widget.dart';
 import '../widgets/menu_image_widget.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'dart:math' show max;
 
 class AdminPage extends StatefulWidget {
   final AppState appState;
@@ -136,6 +139,95 @@ class _AdminPageState extends State<AdminPage> {
       bytes: bytes,
       filename: 'Struk_${order.id}.pdf',
     );
+  }
+
+  Future<void> _printMonthlyReport(bool isDark) async {
+    final pdf = pw.Document();
+    final currencyFormatter = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+    final dateFormatter = DateFormat('dd MMM yyyy', 'id_ID');
+    final now = DateTime.now();
+    final monthAgo = now.subtract(const Duration(days: 30));
+
+    final monthlyOrders = widget.appState.orders
+        .where((o) => o.date.isAfter(monthAgo) && o.status == OrderStatus.completed)
+        .toList();
+
+    final totalMonthly = monthlyOrders.fold<double>(0, (sum, o) => sum + o.total);
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(32),
+        build: (pw.Context ctx) => [
+          pw.Center(
+            child: pw.Text('LAPORAN BULANAN - FINA BERRY',
+                style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
+          ),
+          pw.SizedBox(height: 4),
+          pw.Center(
+            child: pw.Text(
+              '${dateFormatter.format(monthAgo)} s.d. ${dateFormatter.format(now)}',
+              style: const pw.TextStyle(fontSize: 11),
+            ),
+          ),
+          pw.Divider(height: 24),
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Text('Total Transaksi: ${monthlyOrders.length} pesanan',
+                  style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
+              pw.Text('Total Pendapatan: ${currencyFormatter.format(totalMonthly)}',
+                  style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
+            ],
+          ),
+          pw.SizedBox(height: 16),
+          if (monthlyOrders.isEmpty)
+            pw.Center(child: pw.Text('Tidak ada transaksi selesai dalam 30 hari terakhir.'))
+          else
+            pw.Table(
+              border: pw.TableBorder.all(width: 0.5),
+              columnWidths: const {
+                0: pw.FlexColumnWidth(2),
+                1: pw.FlexColumnWidth(2),
+                2: pw.FlexColumnWidth(1),
+                3: pw.FlexColumnWidth(2),
+              },
+              children: [
+                pw.TableRow(
+                  decoration: const pw.BoxDecoration(color: PdfColors.grey300),
+                  children: [
+                    pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text('Order ID', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10))),
+                    pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text('Pelanggan / Meja', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10))),
+                    pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text('Tgl', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10))),
+                    pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text('Total', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10))),
+                  ],
+                ),
+                ...monthlyOrders.map((order) => pw.TableRow(
+                  children: [
+                    pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text(order.id, style: const pw.TextStyle(fontSize: 9))),
+                    pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text('${order.customerName} / Meja ${order.tableNumber}', style: const pw.TextStyle(fontSize: 9))),
+                    pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text(DateFormat('dd/MM').format(order.date), style: const pw.TextStyle(fontSize: 9))),
+                    pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text(currencyFormatter.format(order.total), style: const pw.TextStyle(fontSize: 9))),
+                  ],
+                )),
+              ],
+            ),
+          pw.SizedBox(height: 20),
+          pw.Divider(),
+          pw.Align(
+            alignment: pw.Alignment.centerRight,
+            child: pw.Text(
+              'TOTAL: ${currencyFormatter.format(totalMonthly)}',
+              style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    final bytes = await pdf.save();
+    final monthStr = '${DateFormat('ddMMMyyyy').format(monthAgo)}_${DateFormat('ddMMMyyyy').format(now)}';
+    await Printing.sharePdf(bytes: bytes, filename: 'Laporan_Bulanan_$monthStr.pdf');
   }
 
   @override
@@ -444,8 +536,9 @@ class _AdminPageState extends State<AdminPage> {
 
   // --- DASHBOARD LAYOUT WITH TAB CONTROLLER ---
   Widget _buildDashboard(String role, bool isDark) {
+    final tabCount = role == 'admin' ? 2 : 3;
     return DefaultTabController(
-      length: 3,
+      length: tabCount,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -491,48 +584,45 @@ class _AdminPageState extends State<AdminPage> {
               fontWeight: FontWeight.bold,
               fontSize: 12,
             ),
-            tabs: [
-              Tab(
-                icon: Icon(role == 'admin' ? Icons.bar_chart : Icons.receipt_long),
-                text: role == 'admin' ? 'Analisis & Antrean' : 'Antrean Pesanan',
-              ),
-              Tab(
-                icon: const Icon(Icons.restaurant_menu),
-                text: 'Kelola Menu',
-              ),
-              Tab(
-                icon: const Icon(Icons.inventory_2_outlined),
-                text: 'Stok Bahan',
-              ),
-            ],
+            tabs: role == 'admin'
+                ? const [
+                    Tab(icon: Icon(Icons.bar_chart), text: 'Analisis & Laporan'),
+                    Tab(icon: Icon(Icons.restaurant_menu), text: 'Kelola Menu'),
+                  ]
+                : const [
+                    Tab(icon: Icon(Icons.receipt_long), text: 'Antrean Aktif'),
+                    Tab(icon: Icon(Icons.check_circle_outline), text: 'Pesanan Selesai'),
+                    Tab(icon: Icon(Icons.inventory_2_outlined), text: 'Stok Bahan'),
+                  ],
           ),
         ),
         body: TabBarView(
-          children: [
-            _buildTabOrdersAndStats(role, isDark),
-            _buildTabMenuManagement(role, isDark),
-            _buildTabStockInventory(isDark),
-          ],
+          children: role == 'admin'
+              ? [
+                  _buildTabAdminStats(isDark),
+                  _buildTabMenuManagement(role, isDark),
+                ]
+              : [
+                  _buildTabKasirAntrian(isDark),
+                  _buildTabKasirSelesai(isDark),
+                  _buildTabStockInventory(isDark),
+                ],
         ),
       ),
     );
   }
 
-  // --- TAB 1: ORDERS AND STATS ---
-  Widget _buildTabOrdersAndStats(String role, bool isDark) {
+  // --- TAB 1 ADMIN: STATS + WEEKLY REPORT ---
+  Widget _buildTabAdminStats(bool isDark) {
     final revenue = widget.appState.totalRevenue;
     final totalOrders = widget.appState.totalOrdersCount;
     final activeOrders = widget.appState.activeOrdersCount;
     final menuCount = widget.appState.availableMenuItemsCount;
-    final ordersList = widget.appState.orders;
 
     String formatRevenue(double rev) {
-      if (rev >= 1000000) {
-        return 'Rp ${(rev / 1000000).toStringAsFixed(1)}M';
-      } else if (rev >= 1000) {
-        return 'Rp ${(rev / 1000).toStringAsFixed(0)}K';
-      }
-      return 'Rp 0K';
+      if (rev >= 1000000) return 'Rp ${(rev / 1000000).toStringAsFixed(1)}M';
+      if (rev >= 1000) return 'Rp ${(rev / 1000).toStringAsFixed(0)}K';
+      return 'Rp 0';
     }
 
     return SingleChildScrollView(
@@ -542,88 +632,301 @@ class _AdminPageState extends State<AdminPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Financial stats for reporting
-            if (role == 'admin') ...[
-              _buildStatsCard(
-                title: 'Total Pendapatan',
-                value: formatRevenue(revenue),
-                subtext: '+12.5% dari kemarin',
-                icon: Icons.attach_money,
-                iconColor: Colors.green,
-                accentColor: const Color(0xFF10B981),
-                isDark: isDark,
-              ),
-              const SizedBox(height: 16),
-              _buildStatsCard(
-                title: 'Total Pesanan',
-                value: '$totalOrders',
-                subtext: 'Semua waktu',
-                icon: Icons.shopping_bag_outlined,
-                iconColor: Colors.blue,
-                accentColor: Colors.blueAccent,
-                isDark: isDark,
-              ),
-              const SizedBox(height: 16),
-              _buildStatsCard(
-                title: 'Pesanan Aktif',
-                value: '$activeOrders',
-                subtext: 'Perlu diproses',
-                icon: Icons.trending_up,
-                iconColor: Colors.orange,
-                accentColor: Colors.orangeAccent,
-                isDark: isDark,
-              ),
-              const SizedBox(height: 16),
-              _buildStatsCard(
-                title: 'Menu Tersedia',
-                value: '$menuCount',
-                subtext: 'Item menu',
-                icon: Icons.restaurant,
-                iconColor: Colors.purple,
-                accentColor: Colors.purpleAccent,
-                isDark: isDark,
-              ),
-              const SizedBox(height: 32),
-            ],
+            _buildStatsCard(title: 'Total Pendapatan', value: formatRevenue(revenue), subtext: 'Dari pesanan selesai', icon: Icons.attach_money, iconColor: Colors.green, accentColor: const Color(0xFF10B981), isDark: isDark),
+            const SizedBox(height: 16),
+            _buildStatsCard(title: 'Total Pesanan', value: '$totalOrders', subtext: 'Semua waktu', icon: Icons.shopping_bag_outlined, iconColor: Colors.blue, accentColor: Colors.blueAccent, isDark: isDark),
+            const SizedBox(height: 16),
+            _buildStatsCard(title: 'Pesanan Aktif', value: '$activeOrders', subtext: 'Perlu diproses', icon: Icons.trending_up, iconColor: Colors.orange, accentColor: Colors.orangeAccent, isDark: isDark),
+            const SizedBox(height: 16),
+            _buildStatsCard(title: 'Menu Tersedia', value: '$menuCount', subtext: 'Item menu', icon: Icons.restaurant, iconColor: Colors.purple, accentColor: Colors.purpleAccent, isDark: isDark),
+            const SizedBox(height: 32),
 
-            // Header + Refresh button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Daftar Antrean Pesanan',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.grey[900],
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: _isRefreshingOrders ? null : _refreshOrders,
-                  icon: _isRefreshingOrders
-                      ? const SizedBox(
-                          width: 14,
-                          height: 14,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Color(0xFF10B981),
-                          ),
-                        )
-                      : const Icon(Icons.refresh, size: 18, color: Color(0xFF10B981)),
-                  label: const Text(
-                    'Refresh',
-                    style: TextStyle(color: Color(0xFF10B981), fontSize: 13),
-                  ),
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  ),
-                ),
-              ],
+            // Monthly Revenue Chart
+            Text(
+              'Grafik Pendapatan 30 Hari Terakhir',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.grey[900],
+              ),
             ),
             const SizedBox(height: 12),
+            Container(
+              height: 250,
+              padding: const EdgeInsets.only(top: 20, right: 20, left: 10, bottom: 10),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF161F30) : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: _buildRevenueChart(isDark),
+            ),
+            const SizedBox(height: 32),
 
-            ordersList.isEmpty
-                ? Container(
+            // Monthly PDF Report section
+            Text(
+              'Laporan Bulanan',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.grey[900],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF161F30) : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.picture_as_pdf, color: Color(0xFF10B981), size: 24),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Cetak Laporan Per Bulan',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : Colors.grey[900],
+                              ),
+                            ),
+                            Text(
+                              'Ekspor data pesanan 30 hari terakhir ke PDF',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isDark ? Colors.grey[400] : Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _printMonthlyReport(isDark),
+                      icon: const Icon(Icons.download_rounded, size: 18),
+                      label: const Text('Unduh Laporan PDF', style: TextStyle(fontWeight: FontWeight.bold)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF10B981),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRevenueChart(bool isDark) {
+    final now = DateTime.now();
+    final int daysCount = 30;
+    final List<FlSpot> spots = [];
+    final List<String> dayLabels = List.filled(daysCount, '');
+    final List<double> dailyRevenues = List.filled(daysCount, 0.0);
+
+    for (int i = 0; i < daysCount; i++) {
+      final dayIndex = (daysCount - 1) - i;
+      final day = now.subtract(Duration(days: dayIndex));
+      dayLabels[i] = DateFormat('dd/MM').format(day);
+
+      final dailyOrders = widget.appState.orders.where((o) =>
+          o.status == OrderStatus.completed &&
+          o.date.year == day.year &&
+          o.date.month == day.month &&
+          o.date.day == day.day);
+
+      final dailyRevenue = dailyOrders.fold<double>(0, (sum, o) => sum + o.total);
+      dailyRevenues[i] = dailyRevenue;
+      spots.add(FlSpot(i.toDouble(), dailyRevenue));
+    }
+
+    final maxRevenue = dailyRevenues.isEmpty ? 0.0 : dailyRevenues.reduce(max);
+    double maxY = maxRevenue > 0 ? maxRevenue * 1.2 : 100000.0;
+    
+    if (maxY > 1000000) {
+      maxY = (maxY / 1000000).ceil() * 1000000.0;
+    } else if (maxY > 100000) {
+      maxY = (maxY / 100000).ceil() * 100000.0;
+    }
+
+    return LineChart(
+      LineChartData(
+        minY: 0,
+        maxY: maxY,
+        minX: 0,
+        maxX: (daysCount - 1).toDouble(),
+        lineTouchData: LineTouchData(
+          enabled: true,
+          touchTooltipData: LineTouchTooltipData(
+            getTooltipColor: (touchedSpot) => isDark ? const Color(0xFF2A364E) : Colors.grey[800]!,
+            getTooltipItems: (touchedSpots) {
+              return touchedSpots.map((LineBarSpot touchedSpot) {
+                final revenue = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0).format(touchedSpot.y);
+                return LineTooltipItem(
+                  '${dayLabels[touchedSpot.x.toInt()]}\n',
+                  const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                  children: [
+                    TextSpan(
+                      text: revenue,
+                      style: const TextStyle(color: Color(0xFF10B981), fontSize: 11, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                );
+              }).toList();
+            },
+          ),
+        ),
+        titlesData: FlTitlesData(
+          show: true,
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (double value, TitleMeta meta) {
+                // Show label every 5 days to avoid crowding
+                if (value.toInt() % 5 != 0 && value.toInt() != (daysCount - 1)) {
+                  return const SizedBox.shrink();
+                }
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    dayLabels[value.toInt()],
+                    style: TextStyle(
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+              },
+              reservedSize: 28,
+              interval: 1,
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 46,
+              getTitlesWidget: (double value, TitleMeta meta) {
+                if (value == maxY || value == 0) return const SizedBox.shrink();
+                
+                String text = '';
+                if (value >= 1000000) {
+                  text = '${(value / 1000000).toStringAsFixed(1)}M';
+                } else if (value >= 1000) {
+                  text = '${(value / 1000).toStringAsFixed(0)}K';
+                } else {
+                  text = value.toStringAsFixed(0);
+                }
+
+                return Text(
+                  text,
+                  style: TextStyle(
+                    color: isDark ? Colors.grey[500] : Colors.grey[400],
+                    fontSize: 10,
+                  ),
+                );
+              },
+            ),
+          ),
+          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        ),
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: (maxY / 4) > 0 ? (maxY / 4) : 25000,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: isDark ? Colors.grey[800] : Colors.grey[200],
+              strokeWidth: 1,
+              dashArray: [4, 4],
+            );
+          },
+        ),
+        borderData: FlBorderData(show: false),
+        lineBarsData: [
+          LineChartBarData(
+            spots: spots,
+            isCurved: true,
+            color: const Color(0xFF10B981),
+            barWidth: 3,
+            isStrokeCapRound: true,
+            dotData: const FlDotData(show: false),
+            belowBarData: BarAreaData(
+              show: true,
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF10B981).withOpacity(0.3),
+                  const Color(0xFF10B981).withOpacity(0.0),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- TAB 1 KASIR: ANTREAN AKTIF ---
+  Widget _buildTabKasirAntrian(bool isDark) {
+    final activeOrders = widget.appState.orders
+        .where((o) => o.status == OrderStatus.pending || o.status == OrderStatus.processing)
+        .toList()
+        .reversed
+        .toList();
+
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: RefreshIndicator(
+        color: const Color(0xFF10B981),
+        onRefresh: _refreshOrders,
+        child: activeOrders.isEmpty
+            ? ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(24),
+                children: [
+                  Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
@@ -632,42 +935,124 @@ class _AdminPageState extends State<AdminPage> {
                     ),
                     child: Column(
                       children: [
-                        Icon(
-                          Icons.inbox_outlined,
-                          size: 48,
-                          color: isDark ? Colors.grey[700] : Colors.grey[400],
-                        ),
+                        Icon(Icons.inbox_outlined, size: 48, color: isDark ? Colors.grey[700] : Colors.grey[400]),
                         const SizedBox(height: 12),
-                        Text(
-                          'Belum ada pesanan masuk.',
-                          style: TextStyle(
-                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        Text('Tidak ada antrean aktif.', style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600])),
+                        const SizedBox(height: 8),
+                        Text('Tarik ke bawah untuk refresh', style: TextStyle(fontSize: 12, color: isDark ? Colors.grey[600] : Colors.grey[400])),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            : ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: activeOrders.length,
+                itemBuilder: (context, index) => _buildOrderListItem(activeOrders[index], isDark),
+              ),
+      ),
+    );
+  }
+
+  // --- TAB 2 KASIR: PESANAN SELESAI ---
+  Widget _buildTabKasirSelesai(bool isDark) {
+    final doneOrders = widget.appState.orders
+        .where((o) => o.status == OrderStatus.completed || o.status == OrderStatus.cancelled)
+        .toList()
+        .reversed
+        .toList();
+
+    final currencyFormatter = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+    final dateFormatter = DateFormat('dd MMM, HH:mm', 'id_ID');
+
+    return doneOrders.isEmpty
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.check_circle_outline, size: 64, color: isDark ? Colors.grey[700] : Colors.grey[400]),
+                const SizedBox(height: 12),
+                Text('Belum ada pesanan selesai.', style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600])),
+              ],
+            ),
+          )
+        : ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: doneOrders.length,
+            itemBuilder: (context, index) {
+              final order = doneOrders[index];
+              final isCompleted = order.status == OrderStatus.completed;
+              final statusColor = isCompleted ? const Color(0xFF10B981) : Colors.redAccent;
+              final statusText = isCompleted ? 'Selesai & Lunas' : 'Dibatalkan';
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF161F30) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: statusColor.withOpacity(0.3)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            order.id,
+                            style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.grey[900], fontSize: 14),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        TextButton.icon(
-                          onPressed: _refreshOrders,
-                          icon: const Icon(Icons.refresh, color: Color(0xFF10B981), size: 16),
-                          label: const Text('Tap untuk refresh', style: TextStyle(color: Color(0xFF10B981))),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: statusColor.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(statusText, style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: 11)),
                         ),
                       ],
                     ),
-                  )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: ordersList.length,
-                    itemBuilder: (context, index) {
-                      // Show newest first
-                      final order = ordersList[ordersList.length - 1 - index];
-                      return _buildOrderListItem(order, isDark);
-                    },
-                  ),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
+                    const SizedBox(height: 6),
+                    Text(
+                      '${order.customerName} • Meja ${order.tableNumber}',
+                      style: TextStyle(fontSize: 12, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                    ),
+                    Text(
+                      dateFormatter.format(order.date),
+                      style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[500] : Colors.grey[500]),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          currencyFormatter.format(order.total),
+                          style: TextStyle(fontWeight: FontWeight.w800, color: statusColor, fontSize: 15),
+                        ),
+                        if (isCompleted)
+                          ElevatedButton.icon(
+                            onPressed: () => _printReceipt(order),
+                            icon: const Icon(Icons.print, size: 14),
+                            label: const Text('Struk', style: TextStyle(fontSize: 12)),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF3B82F6),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
   }
 
   Widget _buildStatsCard({
@@ -775,6 +1160,7 @@ class _AdminPageState extends State<AdminPage> {
 
     String formattedPrice =
         'Rp ${order.total.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}';
+    final dateFormatter = DateFormat('dd MMM, HH:mm', 'id_ID');
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -877,6 +1263,24 @@ class _AdminPageState extends State<AdminPage> {
               ),
             ],
           ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Icon(
+                Icons.access_time_rounded,
+                size: 14,
+                color: isDark ? Colors.grey[500] : Colors.grey[500],
+              ),
+              const SizedBox(width: 4),
+              Text(
+                dateFormatter.format(order.date),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isDark ? Colors.grey[500] : Colors.grey[500],
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 8),
           Text(
             formattedPrice,
@@ -930,7 +1334,7 @@ class _AdminPageState extends State<AdminPage> {
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: const Text('Terima Pembayaran', style: TextStyle(fontSize: 12)),
+                  child: const Text('Pesanan Selesai', style: TextStyle(fontSize: 12)),
                 ),
               if (order.status == OrderStatus.completed || order.status == OrderStatus.processing)
                 ElevatedButton.icon(
@@ -1068,83 +1472,111 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
-  // --- TAB 3: STOCK INVENTORY (ADMIN & KASIR) ---
+  // --- TAB 3: STOCK INVENTORY (KASIR ONLY) ---
   Widget _buildTabStockInventory(bool isDark) {
     final stockList = widget.appState.bahanBakuList;
 
-    return ListView.builder(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.all(24),
-      itemCount: stockList.length,
-      itemBuilder: (context, index) {
-        final material = stockList[index];
-        final isLowStock = material.stockAmount <= material.minimumStock;
-
-        // Initialize controllers if not existing
-        if (!_stockControllers.containsKey(material.id)) {
-          _stockControllers[material.id] = TextEditingController(
-            text: material.stockAmount.toString(),
-          );
-        }
-
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF161F30) : Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isLowStock
-                  ? Colors.orangeAccent.withOpacity(0.3)
-                  : (isDark ? Colors.grey[800]! : Colors.grey[200]!),
-              width: isLowStock ? 1.5 : 1,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    material.name,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.grey[900],
-                    ),
-                  ),
-                  if (isLowStock)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.orangeAccent.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(
-                            Icons.warning_amber_rounded,
-                            color: Colors.orangeAccent,
-                            size: 14,
-                          ),
-                          SizedBox(width: 4),
-                          Text(
-                            'Stok Menipis!',
-                            style: TextStyle(
-                              color: Colors.orangeAccent,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF10B981),
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              backgroundColor: isDark ? const Color(0xFF161F30) : Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              content: SizedBox(
+                width: 400,
+                child: SingleChildScrollView(child: _BahanBakuFormWidget(appState: widget.appState, isDark: isDark)),
               ),
+            ),
+          );
+        },
+      ),
+      body: ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.all(24),
+        itemCount: stockList.length,
+        itemBuilder: (context, index) {
+          final material = stockList[index];
+          final isLowStock = material.stockAmount <= material.minimumStock;
+
+          // Initialize controllers if not existing
+          if (!_stockControllers.containsKey(material.id)) {
+            _stockControllers[material.id] = TextEditingController(
+              text: material.stockAmount.toString(),
+            );
+          }
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF161F30) : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isLowStock
+                    ? Colors.orangeAccent.withOpacity(0.3)
+                    : (isDark ? Colors.grey[800]! : Colors.grey[200]!),
+                width: isLowStock ? 1.5 : 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        material.name,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.grey[900],
+                        ),
+                      ),
+                    ),
+                    if (isLowStock)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.orangeAccent.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(
+                              Icons.warning_amber_rounded,
+                              color: Colors.orangeAccent,
+                              size: 14,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Stok Menipis!',
+                              style: TextStyle(
+                                color: Colors.orangeAccent,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                      onPressed: () {
+                        widget.appState.removeBahanBaku(material.id);
+                      },
+                    ),
+                  ],
+                ),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1223,9 +1655,12 @@ class _AdminPageState extends State<AdminPage> {
           ),
         );
       },
+    ),
     );
   }
 }
+
+
 
 class _MenuFormWidget extends StatefulWidget {
   final AppState appState;
@@ -1532,3 +1967,171 @@ class _MenuFormWidgetState extends State<_MenuFormWidget> {
   }
 
 }
+
+class _BahanBakuFormWidget extends StatefulWidget {
+  final AppState appState;
+  final bool isDark;
+
+  const _BahanBakuFormWidget({required this.appState, required this.isDark});
+
+  @override
+  State<_BahanBakuFormWidget> createState() => _BahanBakuFormWidgetState();
+}
+
+class _BahanBakuFormWidgetState extends State<_BahanBakuFormWidget> {
+  final _nameCtrl = TextEditingController();
+  final _unitCtrl = TextEditingController();
+  final _stockCtrl = TextEditingController();
+  final _minStockCtrl = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _unitCtrl.dispose();
+    _stockCtrl.dispose();
+    _minStockCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: widget.isDark ? const Color(0xFF161F30) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Tambah Bahan Baku Baru',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: widget.isDark ? Colors.white : Colors.grey[900],
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: _nameCtrl,
+              style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+              decoration: InputDecoration(
+                labelText: 'Nama Bahan Baku',
+                labelStyle: TextStyle(
+                  color: widget.isDark ? Colors.grey[400] : Colors.grey[700],
+                ),
+                filled: true,
+                fillColor: widget.isDark ? const Color(0xFF1E293B) : Colors.grey[100],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              validator: (v) => v == null || v.isEmpty ? 'Wajib diisi' : null,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _unitCtrl,
+              style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+              decoration: InputDecoration(
+                labelText: 'Satuan (kg, pcs, dll)',
+                labelStyle: TextStyle(
+                  color: widget.isDark ? Colors.grey[400] : Colors.grey[700],
+                ),
+                filled: true,
+                fillColor: widget.isDark ? const Color(0xFF1E293B) : Colors.grey[100],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              validator: (v) => v == null || v.isEmpty ? 'Wajib diisi' : null,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _stockCtrl,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+              decoration: InputDecoration(
+                labelText: 'Stok Awal',
+                labelStyle: TextStyle(
+                  color: widget.isDark ? Colors.grey[400] : Colors.grey[700],
+                ),
+                filled: true,
+                fillColor: widget.isDark ? const Color(0xFF1E293B) : Colors.grey[100],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              validator: (v) => v == null || double.tryParse(v) == null ? 'Wajib diisi angka' : null,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _minStockCtrl,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+              decoration: InputDecoration(
+                labelText: 'Stok Minimum',
+                labelStyle: TextStyle(
+                  color: widget.isDark ? Colors.grey[400] : Colors.grey[700],
+                ),
+                filled: true,
+                fillColor: widget.isDark ? const Color(0xFF1E293B) : Colors.grey[100],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              validator: (v) => v == null || double.tryParse(v) == null ? 'Wajib diisi angka' : null,
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    final newItem = BahanBaku(
+                      id: 'bb-${DateTime.now().millisecondsSinceEpoch}',
+                      name: _nameCtrl.text,
+                      stockAmount: double.parse(_stockCtrl.text),
+                      unit: _unitCtrl.text,
+                      minimumStock: double.parse(_minStockCtrl.text),
+                    );
+                    widget.appState.addBahanBaku(newItem);
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('✅ Bahan baku berhasil ditambahkan!'),
+                        backgroundColor: Color(0xFF10B981),
+                        behavior: SnackBarBehavior.floating,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF10B981),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Simpan Bahan Baku',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

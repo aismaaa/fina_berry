@@ -15,7 +15,8 @@ class ScanPage extends StatefulWidget {
   State<ScanPage> createState() => _ScanPageState();
 }
 
-class _ScanPageState extends State<ScanPage> with SingleTickerProviderStateMixin {
+class _ScanPageState extends State<ScanPage>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -29,12 +30,19 @@ class _ScanPageState extends State<ScanPage> with SingleTickerProviderStateMixin
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0.2, 1.0, curve: Curves.easeOut)),
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.2, 1.0, curve: Curves.easeOut),
+      ),
     );
 
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic)),
-    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _controller.forward();
   }
@@ -63,12 +71,15 @@ class _ScanPageState extends State<ScanPage> with SingleTickerProviderStateMixin
               },
             ),
           ),
-          
+
           // Content
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 32.0,
+                ),
                 child: FadeTransition(
                   opacity: _fadeAnimation,
                   child: SlideTransition(
@@ -85,7 +96,8 @@ class _ScanPageState extends State<ScanPage> with SingleTickerProviderStateMixin
                             border: Border.all(
                               color: const Color(0xFF10B981).withOpacity(0.5),
                               width: 2,
-                              style: BorderStyle.solid, // Flutter doesn't have dotted border built-in easily without CustomPaint, using solid transparent
+                              style: BorderStyle
+                                  .solid, // Flutter doesn't have dotted border built-in easily without CustomPaint, using solid transparent
                             ),
                           ),
                           child: ClipRRect(
@@ -100,14 +112,18 @@ class _ScanPageState extends State<ScanPage> with SingleTickerProviderStateMixin
                                   width: 100,
                                   height: 100,
                                   color: const Color(0xFF10B981),
-                                  child: const Icon(Icons.restaurant, color: Colors.white, size: 50),
+                                  child: const Icon(
+                                    Icons.restaurant,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
                                 );
                               },
                             ),
                           ),
                         ),
                         const SizedBox(height: 12),
-                        
+
                         // Location text under logo
                         const Text(
                           '@ WISATA LEMBAH ASRI SERANG',
@@ -119,7 +135,7 @@ class _ScanPageState extends State<ScanPage> with SingleTickerProviderStateMixin
                           ),
                         ),
                         const SizedBox(height: 32),
-                        
+
                         // Welcome Title
                         const Text(
                           'Welcome to',
@@ -131,7 +147,7 @@ class _ScanPageState extends State<ScanPage> with SingleTickerProviderStateMixin
                           ),
                         ),
                         const SizedBox(height: 8),
-                        
+
                         // Main Title with shadow
                         Text(
                           'Warung Fina Berry',
@@ -140,7 +156,8 @@ class _ScanPageState extends State<ScanPage> with SingleTickerProviderStateMixin
                             color: Colors.white,
                             fontSize: 34,
                             fontWeight: FontWeight.bold,
-                            fontFamily: 'Playfair Display', // fallback to default if not added
+                            fontFamily:
+                                'Playfair Display', // fallback to default if not added
                             shadows: [
                               Shadow(
                                 color: Colors.orange.withOpacity(0.8),
@@ -150,24 +167,36 @@ class _ScanPageState extends State<ScanPage> with SingleTickerProviderStateMixin
                             ],
                           ),
                         ),
-                        
+
                         const SizedBox(height: 12),
-                        
+
                         // Title divider line
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(width: 40, height: 1, color: const Color(0xFF10B981).withOpacity(0.5)),
+                            Container(
+                              width: 40,
+                              height: 1,
+                              color: const Color(0xFF10B981).withOpacity(0.5),
+                            ),
                             const Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8),
-                              child: Icon(Icons.eco, size: 10, color: Color(0xFF10B981)),
+                              child: Icon(
+                                Icons.eco,
+                                size: 10,
+                                color: Color(0xFF10B981),
+                              ),
                             ),
-                            Container(width: 40, height: 1, color: const Color(0xFF10B981).withOpacity(0.5)),
+                            Container(
+                              width: 40,
+                              height: 1,
+                              color: const Color(0xFF10B981).withOpacity(0.5),
+                            ),
                           ],
                         ),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Subtitle
                         Text(
                           'Rasakan sensasi hidangan lezat dengan bahan\nberkualitas terbaik dari alam Lembah Asri.',
@@ -179,7 +208,7 @@ class _ScanPageState extends State<ScanPage> with SingleTickerProviderStateMixin
                           ),
                         ),
                         const SizedBox(height: 48),
-                        
+
                         // Lihat Menu Button
                         SizedBox(
                           width: double.infinity,
@@ -195,15 +224,21 @@ class _ScanPageState extends State<ScanPage> with SingleTickerProviderStateMixin
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               elevation: 8,
-                              shadowColor: const Color(0xFF10B981).withOpacity(0.5),
+                              shadowColor: const Color(
+                                0xFF10B981,
+                              ).withOpacity(0.5),
                             ),
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.restaurant, color: Colors.white, size: 18),
+                                Icon(
+                                  Icons.restaurant,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
                                 SizedBox(width: 12),
                                 Text(
-                                  'Lihat Menu',
+                                  'Masuk',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
@@ -211,14 +246,18 @@ class _ScanPageState extends State<ScanPage> with SingleTickerProviderStateMixin
                                   ),
                                 ),
                                 SizedBox(width: 12),
-                                Icon(Icons.arrow_forward, color: Colors.white, size: 18),
+                                Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
                               ],
                             ),
                           ),
                         ),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Bottom text
                         const Text(
                           'TAKE AWAY • DINE IN',
@@ -241,4 +280,3 @@ class _ScanPageState extends State<ScanPage> with SingleTickerProviderStateMixin
     );
   }
 }
-
