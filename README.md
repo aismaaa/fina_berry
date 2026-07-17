@@ -406,7 +406,17 @@ fina_berry/
 
 ## ⚙️ Cara Instalasi dan Menjalankan Aplikasi
 
-### Prerequisites
+### 🚀 Coba Langsung (Live Demo)
+
+Bagi Anda yang ingin langsung mencoba aplikasi tanpa perlu melakukan instalasi kode di komputer, silakan kunjungi tautan berikut:
+- 🌐 **Web Profil & Dashboard**: [https://finnaberry.my.id/](https://finnaberry.my.id/)
+- 📱 **Aplikasi Android (APK)**: [Download di sini (Mediafire)](https://www.mediafire.com/file/r15ylr53fiu5tfo/app-release.apk/file)
+
+---
+
+### 💻 Instalasi Lokal (Development)
+
+#### Prerequisites
 
 Pastikan perangkat lunak berikut sudah terinstal:
 
