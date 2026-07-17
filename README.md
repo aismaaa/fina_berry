@@ -557,7 +557,7 @@ Fakultas Ilmu Komputer dan Sistem Informasi · UKRI · 2026
 | M. Fajar | 20241320042 | ⚙️ Backend API & Web Logic | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/muhammad-fajar-b237763a5) |
 | M. Fauzi Akbar Rafsanjani | 20241320022 | ⚙️ Backend Developer 2 | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/fauzi-akbar-9270b7423) |
 | M. Abdul Azis | 20241320033 | 🧪 QA & Testing | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/muhammad-abdul-azis-97208a423) |
-| Gemini AI (Antigravity) | — | 🤖 AI Coding Assistant | Pendamping *Pair Programming* & Dokumentasi |
+| Groq AI (Antigravity) | — | 🤖 AI Coding Assistant | Pendamping *Pair Programming* & Dokumentasi |
 
 ---
 
