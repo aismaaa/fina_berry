@@ -4,7 +4,8 @@
 
 # 🍜 Fina Berry — Sistem Manajemen Pesanan & Produksi
 **Aplikasi Mobile POS & Restaurant Management berbasis Flutter**  
-untuk digitalisasi operasional Warung Makan Fina Berry
+untuk digitalisasi operasional Warung Makan Fina Berry 
+Web Profil (https://finnaberry.my.id/)
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Laravel](https://img.shields.io/badge/Laravel-10.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
