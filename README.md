@@ -1,7 +1,8 @@
 <div align="center">
-<img src="assets/images/logo%20fina%20berry.png" alt="Fina Berry Logo" width="160" style="border-radius:16px"/>
-# 🍜 Fina Berry — Sistem Manajemen Pesanan & Produksi
 
+<img src="assets/images/logo%20fina%20berry.png" alt="Fina Berry Logo" width="160" style="border-radius:16px"/>
+
+# 🍜 Fina Berry — Sistem Manajemen Pesanan & Produksi
 **Aplikasi Mobile POS & Restaurant Management berbasis Flutter**  
 untuk digitalisasi operasional Warung Makan Fina Berry
 
