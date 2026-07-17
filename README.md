@@ -1,7 +1,5 @@
 <div align="center">
-
-<img src="assets/images/logo fina berry.png" alt="Fina Berry Logo" width="160" style="border-radius:16px"/>
-
+<img src="assets/images/logo%20fina%20berry.png" alt="Fina Berry Logo" width="160" style="border-radius:16px"/>
 # 🍜 Fina Berry — Sistem Manajemen Pesanan & Produksi
 
 **Aplikasi Mobile POS & Restaurant Management berbasis Flutter**  
@@ -63,6 +61,12 @@ Warung Makan **Fina Berry** sebelumnya mengandalkan buku menu fisik dan pencatat
 ## ✨ Fitur Utama
 
 <details>
+<summary><b>🌐 Web Company Profile (Landing Page)</b></summary>
+
+Halaman profil web responsif yang dibangun menggunakan **Blade Templating (HTML/CSS)** dari Laravel. Berfungsi sebagai wajah digital warung untuk menarik pengunjung dari internet, menampilkan informasi umum, dan mempromosikan cita rasa Fina Berry.
+</details>
+
+<details>
 <summary><b>🔐 Autentikasi & Keamanan (Role-Based)</b></summary>
 
 Sistem login multi-level menggunakan **JWT (JSON Web Token)** yang membedakan hak akses antara **Admin/Pemilik** dan **Kasir**. Sesi aman dengan token yang kedaluwarsa otomatis.
@@ -117,6 +121,7 @@ Dashboard admin menyajikan grafik penjualan harian/bulanan, menu terlaris, dan r
 | Layer | Teknologi | Keterangan |
 |-------|-----------|------------|
 | **Mobile App** | Flutter (Dart) | UI pelanggan & kasir, responsif di Android/iOS |
+| **Web Profile** | Blade Templating | Landing page (HTML/CSS) di dalam ekosistem Laravel |
 | **Backend API** | Laravel 10 (PHP 8.1+) | REST API, business logic, auth JWT |
 | **Database** | MySQL 8.0 | Database relasional untuk data transaksi & inventaris |
 | **AI Engine** | Google Gemini API 1.5 | Generative AI untuk fitur chatbot |
@@ -129,13 +134,13 @@ Dashboard admin menyajikan grafik penjualan harian/bulanan, menu terlaris, dan r
 ## 🏗️ Arsitektur Sistem
 
 ```
-┌────────────────────────────────────────────────────────────┐
-│                       CLIENT LAYER                         │
-│                                                            │
-│  [Pelanggan]           [Kasir]          [Admin/Pemilik]   │
-│  Flutter Mobile    Flutter Mobile/Web   Web Dashboard      │
-│  (Loading Screen)  (Order Management)  (Full Control)     │
-└────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                             CLIENT LAYER                                │
+│                                                                         │
+│  [Pengunjung]      [Pelanggan]           [Kasir]        [Admin/Pemilik] │
+│  Web Profile     Flutter Mobile    Flutter Mobile/Web   Web Dashboard   │
+│ (Landing Page)  (Loading Screen)  (Order Management)  (Full Control)    │
+└─────────────────────────────────────────────────────────────────────────┘
                               │
                    HTTPS / REST API (JSON)
                               │
@@ -178,9 +183,9 @@ Dashboard admin menyajikan grafik penjualan harian/bulanan, menu terlaris, dan r
 
 | Role | Hak Akses | Kemampuan |
 |------|-----------|-----------|
-| 👑 **Admin / Pemilik** | Super Admin — Penuh | Kelola menu, bahan baku, pesanan, laporan, akun kasir, konfigurasi sistem |
-| 🧑‍💼 **Kasir** | Operasional Harian | Terima & update status pesanan, proses pembayaran |
-| 👤 **Pelanggan** | Guest / Publik | Lihat menu, tambah ke keranjang, buat pesanan — tanpa login |
+| 👑 **Admin / Pemilik** | Super Admin — Penuh | Kelola menu,laporan, akun kasir, konfigurasi sistem |
+| 🧑‍💼 **Kasir** | Operasional Harian | Terima & update status pesanan, proses pembayaran, bahan baku |
+| 👤 **Pelanggan** | Guest / Publik | Lihat menu, tambah ke keranjang, buat pesanan, Chatbot — tanpa login |
 
 ---
 
@@ -354,7 +359,10 @@ fina_berry/
 │   ├── app/Http/
 │   │   ├── Controllers/     # MenuController, PesananController, dll.
 │   │   └── Middleware/      # JWT Auth & Role middleware
-│   ├── routes/api.php       # Deklarasi semua endpoints
+│   ├── resources/
+│   │   └── views/           # Web Profile / Landing Page [Sobur (UI) & M. Fajar (Logic)]
+│   ├── routes/api.php       # Deklarasi semua endpoints API
+│   ├── routes/web.php       # Route untuk Web Profile
 │   └── database/            # Migrations & Seeders
 │
 ├── 🧪 testing/                            # QA & Testing [M. Abdul Azis]
@@ -511,8 +519,8 @@ Fakultas Ilmu Komputer dan Sistem Informasi · UKRI · 2026
 |------|-----|-------|--------|
 | Aisma Haidy Putri Berry Ani Nur Rizeki | 20241320001 | 📋 Project Manager | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/aisma-haidy-putri-berry-ani-nur-rizeki-834b7b422/) |
 | Lulu Aeni Salsabila | 20241320008 | 🔍 System Analyst | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/lulu-aeni-salsabila-3b6609422/) |
-| Sobur | 20241320046 | 🎨 Frontend Dev & AI Chatbot | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sobur344) |
-| M. Fajar | 20241320042 | ⚙️ Backend Developer 1 | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/muhammad-fajar-b237763a5) |
+| Sobur | 20241320046 | 🎨 Frontend (Mobile & Web) & AI Chatbot | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sobur344) |
+| M. Fajar | 20241320042 | ⚙️ Backend API & Web Logic | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/muhammad-fajar-b237763a5) |
 | M. Fauzi Akbar Rafsanjani | 20241320022 | ⚙️ Backend Developer 2 | — | https://www.linkedin.com/in/fauzi-akbar-9270b7423?utm_source=share_via&utm_content=profile&utm_medium=member_android
 | M. Abdul Azis | 20241320033 | 🧪 QA & Testing | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/muhammad-abdul-azis-97208a423) |
 | Gemini AI (Antigravity) | — | 🤖 AI Coding Assistant | Pendamping *Pair Programming* & Dokumentasi |
