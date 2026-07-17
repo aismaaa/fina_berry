@@ -10,7 +10,7 @@ Web Profil (https://finnaberry.my.id/)
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Laravel](https://img.shields.io/badge/Laravel-10.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com)
-[![Gemini AI](https://img.shields.io/badge/Gemini_AI-1.5-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
+[![Groq API](https://img.shields.io/badge/Groq_API-LLaMA_3-f55036?style=for-the-badge&logo=groq&logoColor=white)](https://groq.com)
 [![Midtrans](https://img.shields.io/badge/Midtrans-Payment-00A8E0?style=for-the-badge&logo=stripe&logoColor=white)](https://midtrans.com)
 
 [![Version](https://img.shields.io/badge/version-1.0.0-brightgreen?style=flat-square)](.)
@@ -64,7 +64,7 @@ Warung Makan **Fina Berry** sebelumnya mengandalkan buku menu fisik dan pencatat
 | ✏️ Pencatatan pesanan manual rentan salah catat | 🛒 Sistem pemesanan interaktif & terdigitalisasi |
 | 📦 Stok bahan baku sulit dipantau secara akurat | 🔄 Pengurangan stok otomatis setiap transaksi |
 | 📊 Laporan penjualan dikerjakan manual | 📈 Dashboard laporan & analitik real-time |
-| ❓ Pelanggan kesulitan bertanya tentang menu | 🤖 AI Chatbot Assistant berbasis Gemini |
+| ❓ Pelanggan kesulitan bertanya tentang menu | 🤖 AI Chatbot Assistant berbasis Groq AI |
 
 ---
 
@@ -115,7 +115,7 @@ Fitur *core* sistem. Setiap pesanan yang dikonfirmasi pelanggan akan secara otom
 <details>
 <summary><b>🤖 AI Chatbot Assistant (by Sobur)</b></summary>
 
-Asisten virtual berbasis **Google Gemini AI** yang menjawab pertanyaan pelanggan seputar menu, harga, ketersediaan, promo, dan membantu proses pemesanan langsung dari jendela chat. Seluruhnya dikembangkan oleh Sobur.
+Asisten virtual berbasis **Groq AI (LLaMA 3)** yang menjawab pertanyaan pelanggan seputar menu, harga, ketersediaan, promo, dan membantu proses pemesanan langsung dari jendela chat. Seluruhnya dikembangkan oleh Sobur.
 </details>
 
 <details>
@@ -148,7 +148,7 @@ Dashboard admin menyajikan grafik penjualan harian/bulanan, menu terlaris, dan r
 | **Web Profile** | Blade Templating | Landing page (HTML/CSS) di dalam ekosistem Laravel |
 | **Backend API** | Laravel 10 (PHP 8.1+) | REST API, business logic, auth JWT |
 | **Database** | MySQL 8.0 | Database relasional untuk data transaksi & inventaris |
-| **AI Engine** | Google Gemini API 1.5 | Generative AI untuk fitur chatbot |
+| **AI Engine** | Groq API (LLaMA 3) | Fast Inference LLM untuk fitur chatbot |
 | **Payment** | Midtrans Payment Gateway | Integrasi pembayaran digital |
 | **Auth** | JWT (JSON Web Token) | Autentikasi stateless & aman |
 | **Testing** | Playwright (Node.js) | End-to-end testing oleh tim QA |
@@ -196,8 +196,8 @@ Dashboard admin menyajikan grafik penjualan harian/bulanan, menu terlaris, dan r
               ┌───────────────┴──────────────┐
               │                              │
      ┌────────────────┐           ┌─────────────────┐
-     │  Midtrans API  │           │  Google Gemini  │
-     │ (Payment GW)   │           │   AI API 1.5    │
+     │  Midtrans API  │           │    Groq API     │
+     │ (Payment GW)   │           │    (LLaMA 3)    │
      └────────────────┘           └─────────────────┘
 ```
 
@@ -272,7 +272,7 @@ menu_bahan      → menu_id (FK), bahan_baku_id (FK), jumlah_dibutuhkan  ← Tab
 
 > **Dikembangkan sepenuhnya oleh Sobur** · Frontend Developer & AI Chatbot Dev
 
-Fitur inovatif berupa asisten virtual berbasis **Google Gemini 1.5** yang terintegrasi langsung di aplikasi Flutter, memungkinkan pelanggan berinteraksi secara natural menggunakan bahasa sehari-hari.
+Fitur inovatif berupa asisten virtual berbasis **Groq API (Model LLaMA 3)** yang terintegrasi langsung di aplikasi Flutter, memungkinkan pelanggan berinteraksi secara natural menggunakan bahasa sehari-hari.
 
 ### Kemampuan Chatbot
 
@@ -301,7 +301,7 @@ Fetch data menu terbaru  ←  GET /api/menu
 Bangun System Prompt + Konteks Menu + Riwayat Chat
          │
          ▼
-Kirim ke Google Gemini API 1.5
+Kirim ke Groq API (Chat Completions)
          │
          ▼
 Terima respons natural language dalam Bahasa Indonesia
@@ -316,8 +316,8 @@ Muncul tombol "Tambah ke Keranjang" di dalam chat
 ### Stack Teknologi Chatbot
 
 ```yaml
-AI Model    : Google Gemini API 1.5 Flash / Pro
-SDK         : Dart package — google_generative_ai
+AI Model    : LLaMA 3 (via Groq API)
+SDK         : HTTP Client (OpenAI API Compatible)
 Data Source : REST API Laravel (menu, config warung)
 UI          : Custom Flutter Widget (ChatBubble, TypingIndicator, MenuCard)
 State Mgmt  : Provider / Riverpod
@@ -372,7 +372,7 @@ fina_berry/
 │   ├── lib/
 │   │   ├── pages/           # Halaman (Beranda, Menu, Keranjang, Chatbot, dll.)
 │   │   ├── widgets/         # Komponen reusable (ChatBubble, MenuCard, Footer)
-│   │   ├── services/        # API Client & Gemini AI Integration
+│   │   ├── services/        # API Client & Groq API Integration
 │   │   ├── state/           # State Management (app_state.dart)
 │   │   └── models/          # Data models
 │   ├── assets/
@@ -483,11 +483,11 @@ const String baseUrl = 'http://10.0.2.2:8000/api'; // Android Emulator
 // const String baseUrl = 'http://localhost:8000/api'; // Web/iOS Simulator
 ```
 
-Konfigurasi Gemini AI di `lib/services/chatbot_service.dart`:
+Konfigurasi Groq API di `lib/services/chat_service.dart`:
 
 ```dart
-const String _geminiApiKey = 'YOUR_GEMINI_API_KEY_HERE';
-// Dapatkan API Key di: https://aistudio.google.com/
+const String _groqApiKey = 'YOUR_GROQ_API_KEY_HERE';
+// Dapatkan API Key di: https://api.groq.com/openai/v1/chat/completions
 ```
 
 ---
