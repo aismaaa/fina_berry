@@ -207,9 +207,9 @@ Dashboard admin menyajikan grafik penjualan harian/bulanan, menu terlaris, dan r
 
 | Role | Hak Akses | Kemampuan |
 |------|-----------|-----------|
-| 👑 **Admin / Pemilik** | Super Admin — Penuh | Kelola menu,laporan, akun kasir, konfigurasi sistem |
-| 🧑‍💼 **Kasir** | Operasional Harian | Terima & update status pesanan, proses pembayaran, bahan baku |
-| 👤 **Pelanggan** | Guest / Publik | Lihat menu, tambah ke keranjang, buat pesanan, Chatbot — tanpa login |
+| 👑 **Admin / Pemilik** | Super Admin — Penuh | Kelola menu,laporan ,cetak laporan |
+| 🧑‍💼 **Kasir** | Operasional Harian | Terima & update status pesanan, Terima pembayaran, cetak struk, bahan baku |
+| 👤 **Pelanggan** | Guest / Publik | Lihat menu, tambah ke keranjang, buat pesanan, check out, bisa buat pesanan via chatbot |
 
 ---
 
