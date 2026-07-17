@@ -27,24 +27,32 @@ Web Profil (https://finnaberry.my.id/)
 
 ## 📋 Daftar Isi
 
-- [📖 Tentang Proyek](#-tentang-proyek)
+- [📱 Profil Aplikasi](#-profil-aplikasi)
+- [📖 Latar Belakang dan Tujuan](#-latar-belakang-dan-tujuan)
 - [✨ Fitur Utama](#-fitur-utama)
-- [🛠️ Tech Stack](#️-tech-stack)
-- [🏗️ Arsitektur Sistem](#️-arsitektur-sistem)
+- [📸 Tampilan Aplikasi (Screenshot)](#-tampilan-aplikasi-screenshot)
+- [🚦 Cara Penggunaan](#-cara-penggunaan)
+- [🏗️ Infrastruktur yang Digunakan](#️-infrastruktur-yang-digunakan)
+- [🛠️ Teknologi yang Dipakai](#️-teknologi-yang-dipakai)
 - [👤 Hak Akses Pengguna](#-hak-akses-pengguna)
 - [🗄️ Struktur Database](#️-struktur-database)
-- [🚦 Alur Penggunaan](#-alur-penggunaan)
 - [🤖 AI Chatbot Assistant](#-ai-chatbot-assistant)
 - [💳 Metode Pembayaran](#-metode-pembayaran)
 - [📌 API Endpoints](#-api-endpoints)
 - [📁 Struktur Repositori](#-struktur-repositori)
-- [⚙️ Instalasi & Setup](#️-instalasi--setup)
+- [⚙️ Cara Instalasi dan Menjalankan Aplikasi](#️-cara-instalasi-dan-menjalankan-aplikasi)
 - [📝 Dokumentasi](#-dokumentasi)
 - [👥 Tim Pengembang](#-tim-pengembang)
 
 ---
 
-## 📖 Tentang Proyek
+## 📱 Profil Aplikasi
+
+**Fina Berry App** adalah Sistem Manajemen Pesanan & Produksi berbasis mobile (Flutter) dan backend (Laravel) yang dirancang khusus untuk memfasilitasi operasional Warung Makan Fina Berry secara digital, mulai dari pemesanan oleh pelanggan, manajemen dapur, kasir, hingga pelaporan otomatis. Proyek ini juga terintegrasi dengan [Web Profil](https://finnaberry.my.id/) responsif untuk memperluas jangkauan promosi warung.
+
+---
+
+## 📖 Latar Belakang dan Tujuan
 
 Warung Makan **Fina Berry** sebelumnya mengandalkan buku menu fisik dan pencatatan pesanan manual — rentan *human error*, lambat, dan sulit memantau stok bahan baku secara *real-time*.
 
@@ -118,7 +126,21 @@ Dashboard admin menyajikan grafik penjualan harian/bulanan, menu terlaris, dan r
 
 ---
 
-## 🛠️ Tech Stack
+## 📸 Tampilan Aplikasi (Screenshot)
+
+*(Ini adalah tempat untuk memasukkan screenshot asli dari aplikasi. Anda bisa mengganti file placeholder di bawah ini nanti)*
+
+<div align="center">
+  <img src="assets/images/loading.jpeg" width="220" alt="Loading Screen" style="border-radius:12px; margin: 0 10px;"/>
+  <!-- Silakan ganti link di bawah ini dengan gambar aplikasi asli yang ada di folder assets -->
+  <img src="https://via.placeholder.com/220x450.png?text=Menu+Screen" width="220" alt="Menu Screen" style="border-radius:12px; margin: 0 10px;"/>
+  <img src="https://via.placeholder.com/220x450.png?text=AI+Chatbot" width="220" alt="AI Chatbot Screen" style="border-radius:12px; margin: 0 10px;"/>
+</div>
+<br/>
+
+---
+
+## 🛠️ Teknologi yang Dipakai
 
 | Layer | Teknologi | Keterangan |
 |-------|-----------|------------|
@@ -133,7 +155,7 @@ Dashboard admin menyajikan grafik penjualan harian/bulanan, menu terlaris, dan r
 
 ---
 
-## 🏗️ Arsitektur Sistem
+## 🏗️ Infrastruktur yang Digunakan
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -206,7 +228,7 @@ menu_bahan      → menu_id (FK), bahan_baku_id (FK), jumlah_dibutuhkan  ← Tab
 
 ---
 
-## 🚦 Alur Penggunaan
+## 🚦 Cara Penggunaan
 
 ### Customer Journey (Pelanggan)
 
@@ -382,7 +404,7 @@ fina_berry/
 
 ---
 
-## ⚙️ Instalasi & Setup
+## ⚙️ Cara Instalasi dan Menjalankan Aplikasi
 
 ### Prerequisites
 
