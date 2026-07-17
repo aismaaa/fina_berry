@@ -128,18 +128,20 @@ class FooterWidget extends StatelessWidget {
         const SizedBox(height: 20),
         Row(
           children: [
-            _buildSocialIcon(
-              Icons.camera_alt_outlined,
-              isDark,
+            _buildSocialButton(
+              label: 'Instagram',
+              icon: Icons.camera_alt_rounded,
+              isDark: isDark,
               url: 'https://www.instagram.com/fina.berry?igsh=MWR0OGRpdXB2bzQwMg==',
-              color: const Color(0xFFE1306C), // Instagram pink
+              color: const Color(0xFFE1306C),
             ),
-            const SizedBox(width: 12),
-            _buildSocialIcon(
-              Icons.chat_bubble_outline,
-              isDark,
+            const SizedBox(width: 10),
+            _buildSocialButton(
+              label: 'WhatsApp',
+              icon: Icons.phone_in_talk_rounded,
+              isDark: isDark,
               url: 'https://wa.me/6285647731631',
-              color: const Color(0xFF25D366), // WhatsApp green
+              color: const Color(0xFF25D366),
             ),
           ],
         ),
@@ -147,22 +149,25 @@ class FooterWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildSocialIcon(
-    IconData icon,
-    bool isDark, {
+  Widget _buildSocialButton({
+    required String label,
+    required IconData icon,
+    required bool isDark,
     required String url,
     required Color color,
   }) {
     return GestureDetector(
       onTap: () async {
         final uri = Uri.parse(url);
-        if (await canLaunchUrl(uri)) {
+        try {
           await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } catch (e) {
+          debugPrint('Could not launch $url');
         }
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: color.withOpacity(0.12),
           borderRadius: BorderRadius.circular(12),
@@ -171,10 +176,20 @@ class FooterWidget extends StatelessWidget {
             width: 1.5,
           ),
         ),
-        child: Icon(
-          icon,
-          color: color,
-          size: 20,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 16),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -242,7 +257,7 @@ class FooterWidget extends StatelessWidget {
           isDark,
         ),
         const SizedBox(height: 16),
-        _buildContactItem(Icons.phone_outlined, '+62 812-3456-7890', isDark),
+        _buildContactItem(Icons.phone_outlined, '+6285647731631', isDark),
         const SizedBox(height: 16),
         _buildContactItem(
           Icons.access_time_outlined,

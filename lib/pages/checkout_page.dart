@@ -35,8 +35,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: 'sobur');
-    _tableController = TextEditingController(text: widget.appState.tableNumber ?? 'A4');
+    _nameController = TextEditingController();
+    _tableController = TextEditingController();
   }
 
   @override
@@ -45,7 +45,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     _tableController.dispose();
     super.dispose();
   }
-
+ 
   Future<void> _processMidtransPayment(
     String name,
     String table,
@@ -57,26 +57,32 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
     try {
       // Panggil backend Laravel kita yang sudah terintegrasi dengan Midtrans
-      final items = widget.appState.cartItems.map((cartItem) => {
-        'menu_id': cartItem.item.id,
-        'quantity': cartItem.quantity,
-        'price': cartItem.item.price,
-      }).toList();
+      final items = widget.appState.cartItems
+          .map(
+            (cartItem) => {
+              'menu_id': cartItem.item.id,
+              'quantity': cartItem.quantity,
+              'price': cartItem.item.price,
+            },
+          )
+          .toList();
 
-      final response = await http.post(
-        Uri.parse('${widget.appState.baseUrl}/orders'),
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'customerName': name,
-          'tableNumber': table,
-          'paymentMethod': _selectedPaymentMethod,
-          'total': amount,
-          'items': items,
-        }),
-      ).timeout(const Duration(seconds: 15));
+      final response = await http
+          .post(
+            Uri.parse('${widget.appState.baseUrl}/orders'),
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'customerName': name,
+              'tableNumber': table,
+              'paymentMethod': _selectedPaymentMethod,
+              'total': amount,
+              'items': items,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
 
       final data = jsonDecode(response.body);
 
@@ -90,7 +96,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
         // Buka URL Pembayaran Midtrans di browser eksternal
         final redirectUrl = Uri.parse(data['redirect_url']);
-        if (!await launchUrl(redirectUrl, mode: LaunchMode.externalApplication)) {
+        if (!await launchUrl(
+          redirectUrl,
+          mode: LaunchMode.externalApplication,
+        )) {
           throw Exception('Tidak dapat membuka halaman pembayaran');
         }
 
@@ -103,7 +112,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
             context: context,
             barrierDismissible: false,
             builder: (ctx) => AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
               backgroundColor: Theme.of(ctx).brightness == Brightness.dark
                   ? const Color(0xFF161F30)
                   : Colors.white,
@@ -117,7 +128,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       color: const Color(0xFF10B981).withOpacity(0.12),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.check_circle, color: Color(0xFF10B981), size: 56),
+                    child: const Icon(
+                      Icons.check_circle,
+                      color: Color(0xFF10B981),
+                      size: 56,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -151,11 +166,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF10B981),
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                       onPressed: () => Navigator.pop(ctx),
-                      child: const Text('OK, Mengerti', style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: const Text(
+                        'OK, Mengerti',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ],
@@ -164,7 +184,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
           );
           widget.onOrderSuccess();
         }
-
       } else if ((response.statusCode == 200 || response.statusCode == 201) &&
           data['midtrans_error'] != null) {
         // Order berhasil dibuat tapi Midtrans error
@@ -172,7 +191,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Order dibuat, tapi pembayaran online gagal: ${data['midtrans_error']}'),
+              content: Text(
+                'Order dibuat, tapi pembayaran online gagal: ${data['midtrans_error']}',
+              ),
               backgroundColor: Colors.orange,
               duration: const Duration(seconds: 5),
             ),
@@ -298,6 +319,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 fontSize: 14,
                               ),
                               decoration: InputDecoration(
+                                hintText: 'Contoh: Budi Santoso',
+                                hintStyle: TextStyle(
+                                  color: isDark ? Colors.grey[600] : Colors.grey[400],
+                                ),
                                 filled: true,
                                 fillColor: isDark
                                     ? const Color(0xFF1E293B)
@@ -476,7 +501,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.grey[400] : Colors.grey[600],
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),

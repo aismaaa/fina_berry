@@ -21,7 +21,10 @@ class BerandaPage extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 16.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -41,7 +44,9 @@ class BerandaPage extends StatelessWidget {
                       TextSpan(
                         text: 'Favorit Anda',
                         style: TextStyle(
-                          color: isDark ? const Color(0xFF10B981) : const Color(0xFF059669),
+                          color: isDark
+                              ? const Color(0xFF10B981)
+                              : const Color(0xFF059669),
                         ),
                       ),
                     ],
@@ -91,28 +96,6 @@ class BerandaPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: onNavigateToMenu,
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: isDark ? Colors.white : Colors.grey[100],
-                          foregroundColor: Colors.black,
-                          side: BorderSide.none,
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        child: const Text(
-                          'Lihat Menu',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 40),
@@ -126,9 +109,7 @@ class BerandaPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24),
                         image: const DecorationImage(
-                          image: AssetImage(
-                            'assets/images/menu lezat.png',
-                          ),
+                          image: AssetImage('assets/images/menu lezat.png'),
                           fit: BoxFit.cover,
                         ),
                         boxShadow: [
@@ -145,7 +126,10 @@ class BerandaPage extends StatelessWidget {
                       bottom: -15,
                       left: -10,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 14,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),

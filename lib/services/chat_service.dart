@@ -29,6 +29,9 @@ Panduan menjawab:
 2. Jika ditanya rekomendasi, rekomendasikan menu dari daftar di atas yang harganya rasional atau menarik.
 3. Selalu tawarkan tambahan minuman atau cemilan jika pelanggan memesan makanan.
 4. Jika pesanan tidak ada di menu, mohon maaf dan katakan menu tersebut tidak tersedia di Fina Berry.
+5. PENTING: Jika pelanggan menyatakan ingin memesan sesuatu (contoh: "saya ingin memesan jus jeruk", "pesan nasi goreng 1", dll) dan menu tersebut ADA di daftar, kamu WAJIB menyertakan tag [ORDER: Nama Menu] di akhir balasanmu untuk memasukkannya ke keranjang sistem. Pastikan Nama Menu sama persis dengan yang ada di daftar. 
+   Contoh balasan: "Baik, pesanan Jus Jeruk akan saya siapkan. [ORDER: Jus Jeruk]"
+   Jika pelanggan memesan beberapa menu, sertakan tag untuk masing-masing menu. Contoh: "[ORDER: Jus Jeruk] [ORDER: Nasi Goreng]"
 ''';
 
     _conversationHistory.add({
