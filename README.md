@@ -521,7 +521,7 @@ Fakultas Ilmu Komputer dan Sistem Informasi · UKRI · 2026
 | Lulu Aeni Salsabila | 20241320008 | 🔍 System Analyst | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/lulu-aeni-salsabila-3b6609422/) |
 | Sobur | 20241320046 | 🎨 Frontend (Mobile & Web) & AI Chatbot | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sobur344) |
 | M. Fajar | 20241320042 | ⚙️ Backend API & Web Logic | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/muhammad-fajar-b237763a5) |
-| M. Fauzi Akbar Rafsanjani | 20241320022 | ⚙️ Backend Developer 2 | — | https://www.linkedin.com/in/fauzi-akbar-9270b7423?utm_source=share_via&utm_content=profile&utm_medium=member_android
+| M. Fauzi Akbar Rafsanjani | 20241320022 | ⚙️ Backend Developer 2 | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/fauzi-akbar-9270b7423) |
 | M. Abdul Azis | 20241320033 | 🧪 QA & Testing | [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/muhammad-abdul-azis-97208a423) |
 | Gemini AI (Antigravity) | — | 🤖 AI Coding Assistant | Pendamping *Pair Programming* & Dokumentasi |
 
